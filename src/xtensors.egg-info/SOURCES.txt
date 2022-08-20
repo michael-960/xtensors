@@ -1,0 +1,17 @@
+LICENSE
+README.rst
+pyproject.toml
+setup.cfg
+setup.py
+src/xtensors/__init__.py
+src/xtensors.egg-info/PKG-INFO
+src/xtensors.egg-info/SOURCES.txt
+src/xtensors.egg-info/dependency_links.txt
+src/xtensors.egg-info/requires.txt
+src/xtensors.egg-info/top_level.txt
+src/xtensors/base/__init__.py
+src/xtensors/base/_reduc.py
+src/xtensors/base/_reduc_2to1.py
+src/xtensors/functionals/__init__.py
+src/xtensors/functionals/base.py
+src/xtensors/functionals/reductions.py

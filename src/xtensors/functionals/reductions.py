@@ -3,8 +3,8 @@ from typing import Optional, overload
 import numpy as np
 from numpy.typing import ArrayLike
 
-from xtensor.functionals.base import DataArray, Functional
-from xtensor import base
+from xtensors.functionals.base import DataArray, Functional
+from xtensors import base
 
 
 
