@@ -1,10 +1,10 @@
 from __future__ import annotations
 from typing import Optional, overload
 import numpy as np
-from numpy.typing import ArrayLike
 
 from xtensors.functionals.base import DataArray, Functional
 from xtensors import base
+from xtensors.typing import NDArray
 
 
 
@@ -15,7 +15,7 @@ class Reduction(Functional):
         self.name = 'UNIMPLEMENTED_REDUCTION'
 
 
-    def __call__(self, x: ArrayLike) -> DataArray:
+    def __call__(self, x: NDArray) -> DataArray:
         if isinstance(x, DataArray):
             return self._reduce(x, self.dim)
         else:

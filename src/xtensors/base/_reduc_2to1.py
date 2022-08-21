@@ -2,9 +2,12 @@ from __future__ import annotations
 from typing import cast, overload, Tuple, Protocol, Any
 
 import numpy as np
-from numpy.typing import ArrayLike
+from numpy.typing import NDArray
 
 from xarray import DataArray
+
+from xtensors.typing import NDArray
+from xtensors.typing import AxisDim, AxisDimPair
 
 
 @overload
@@ -12,13 +15,13 @@ def diagonal(x: DataArray, dim1: str, dim2: str, dim_out: str) -> DataArray: ...
 @overload
 def diagonal(x: DataArray, dim1: int, dim2: int, dim_out: str) -> DataArray: ...
 @overload
-def diagonal(x: ArrayLike, dim1: int, dim2: int, dim_out: str) -> DataArray: ...
+def diagonal(x: NDArray, dim1: int, dim2: int, dim_out: str) -> DataArray: ...
 @overload
-def diagonal(x: ArrayLike, dim1: Tuple[int,str], dim2: Tuple[int,str], dim_out: str) -> DataArray: ...
+def diagonal(x: NDArray, dim1: Tuple[int,str], dim2: Tuple[int,str], dim_out: str) -> DataArray: ...
 
 def diagonal(
-        x: ArrayLike,
-        dim1: str|int|Tuple[int,str], dim2: str|int|Tuple[int,str],
+        x: NDArray,
+        dim1: AxisDim|AxisDimPair, dim2: AxisDim|AxisDimPair,
         dim_out: str) -> DataArray:
 
     assert isinstance(dim1, (str, int, tuple))
