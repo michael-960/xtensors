@@ -4,5 +4,6 @@ from typing import Tuple, Union
 
 
 
-AxisDim = Union[str, int]
 AxisDimPair = Tuple[int, str]
+DimLike = Union[int, str, AxisDimPair]
+DimsLike = Union[Tuple[int,...], Tuple[str,...], Tuple[AxisDimPair, ...]]
