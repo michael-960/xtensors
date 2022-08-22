@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: xtensors
-Version: 0.0.1
+Version: 0.0.2
 Summary: ND named tensor utilities
 Home-page: https://github.com/michael-960/xtensor
 Author: Michael Wang
@@ -14,8 +14,8 @@ Description-Content-Type: text/x-rst
 License-File: LICENSE
 
 
-xtensor
+xtensors
 ############
-:code: `xtensor` is an ND tensor manipulation utility package based on xarray.
+`xtensors` is an ND tensor manipulation utility package based on xarray.
 
 

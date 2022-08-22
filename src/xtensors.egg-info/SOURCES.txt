@@ -12,6 +12,12 @@ src/xtensors.egg-info/top_level.txt
 src/xtensors/base/__init__.py
 src/xtensors/base/_reduc.py
 src/xtensors/base/_reduc_2to1.py
+src/xtensors/base/_ufuncs.py
 src/xtensors/functionals/__init__.py
 src/xtensors/functionals/base.py
 src/xtensors/functionals/reductions.py
+src/xtensors/typing/__init__.py
+src/xtensors/typing/_indices.py
+src/xtensors/typing/_tensors.py
+src/xtensors/unify/__init__.py
+src/xtensors/unify/_unify.py
