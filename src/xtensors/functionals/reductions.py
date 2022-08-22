@@ -4,23 +4,21 @@ import numpy as np
 
 from xtensors.functionals.base import DataArray, Functional
 from xtensors import base
-from xtensors.typing import NDArray
+from xtensors.typing import NDArray, DimLike, DimsLike
 
 
 
 class Reduction(Functional):
-    def __init__(self, dim: int|str) -> None:
+    '''
+    Single-axis reduction fucntional
+    '''
+    def __init__(self, dim: DimLike) -> None:
         self.dim = dim
         self._reduce: base._reduc.ReductionFunc
         self.name = 'UNIMPLEMENTED_REDUCTION'
 
-
     def __call__(self, x: NDArray) -> DataArray:
-        if isinstance(x, DataArray):
-            return self._reduce(x, self.dim)
-        else:
-            assert isinstance(self.dim, int)
-            return self._reduce(x, self.dim)
+        return self._reduce(x, self.dim)
 
 
 class Mean(Reduction):

@@ -1,10 +1,8 @@
 from __future__ import annotations
 import typing
-#from numpy.typing import NDArray
 
 
 from xarray import DataArray
-
 from xtensors.typing import NDArray
 
 
