@@ -10,6 +10,8 @@ from ._binary_op import (
     _equal as equal,
 )
 
+from ._misc import where, argmax, argmin, softmax, get_rank
+
 from ._broadcast import (
     are_shapes_broadcastable, broadcast_shapes,
     are_xarrays_broadcastable, broadcast_xarrays,

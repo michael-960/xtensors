@@ -12,7 +12,7 @@ from xtensors.unify import get_axes, strip_dims
 
 
 class _np_reduction_func(Protocol):
-    def __call__(self, a: NDArray, axis: int|Tuple[int,...]=...) -> DataArray: ...
+    def __call__(self, a: NDArray, axis: int|Tuple[int,...]) -> DataArray: ...
 
 
 class ReductionFunc(Protocol):
@@ -50,3 +50,6 @@ _any = _reduction_factory(np.any)
 _nanmean = _reduction_factory(np.nanmean)
 _nanstd = _reduction_factory(np.nanstd)
 _nansum = _reduction_factory(np.nansum)
+
+
+

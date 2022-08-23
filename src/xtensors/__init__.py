@@ -1,3 +1,5 @@
+from .base import where, argmax, argmin, softmax, get_rank
+
 from .base import (diagonal, 
         sum, std, mean, 
         max, min, all, any, 

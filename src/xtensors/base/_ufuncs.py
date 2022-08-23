@@ -10,7 +10,7 @@ import torch
 
 
 class _ufunc(Protocol):
-    def __call__(self, __x1: ArrayLike, *args) -> np.ndarray: ...
+    def __call__(self, __x1: np.ndarray, *args) -> np.ndarray: ...
 
 
 class UFunc(Protocol):
@@ -30,8 +30,9 @@ def _ufunc_factory(_np_func: _ufunc) -> UFunc:
     return _f
 
 
-def _sigmoid(__x1: ArrayLike):
-    return 1. / (1. + np.exp(__x1))
+def _sigmoid(__x1: np.ndarray):
+    __x = np.where(__x1 < -700., -700., __x1)
+    return 1. / (1. + np.exp(-__x))
 
 
 
