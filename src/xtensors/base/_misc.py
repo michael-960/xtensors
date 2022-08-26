@@ -45,35 +45,6 @@ def where(condition: NDArray, x: NDArray|number, y: NDArray|number) -> DataArray
     return DataArray(_z, dims=dims)
 
 
-def argmax(x: NDArray, dim: DimLike) -> DataArray:
-
-    axis = get_axes(x, dim)[0]
-
-    _y = np.argmax(x.__array__(), axis=axis)
-
-    dims = None
-    if isinstance(x, DataArray):
-        _dims = cast(Tuple[str,...], x.dims)
-        dims = strip_dims(_dims, (axis,))
-
-    return DataArray(_y, dims=dims)
-
-
-def argmin(x: NDArray, dim: DimLike) -> DataArray:
-
-    axis = get_axes(x, dim)[0]
-
-    _y = np.argmin(x.__array__(), axis=axis)
-
-    dims = None
-    if isinstance(x, DataArray):
-        _dims = cast(Tuple[str,...], x.dims)
-        dims = strip_dims(_dims, (axis,))
-
-    return DataArray(_y, dims=dims)
-
-
-
 def softmax(x: NDArray, dim: DimLike) -> DataArray:
 
     axis = get_axes(x, dim)[0]

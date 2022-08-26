@@ -1,14 +1,16 @@
 from __future__ import annotations
 from typing import Any, Protocol, Sequence, Tuple, overload, cast
 import numpy as np
-from numpy.typing import ArrayLike, DTypeLike
-from torch.types import Number
 from xarray import DataArray
 
 from xtensors.typing import NDArray
 from xtensors.typing import AxisDimPair, DimLike, DimsLike
 
 from xtensors.unify import get_axes, strip_dims
+
+'''
+For reduction functions that can act over multiple axes/dims.
+'''
 
 
 class _np_reduction_func(Protocol):
@@ -17,6 +19,8 @@ class _np_reduction_func(Protocol):
 
 class ReductionFunc(Protocol):
     def __call__(self, x: NDArray, dim: DimLike|DimsLike|None) -> DataArray: ...
+
+
 
 
 def _reduction_factory(_np_func: _np_reduction_func) -> ReductionFunc:
@@ -37,19 +41,21 @@ def _reduction_factory(_np_func: _np_reduction_func) -> ReductionFunc:
 
 
 _sum = _reduction_factory(np.sum)
-
 _mean = _reduction_factory(np.mean)
 _std = _reduction_factory(np.std)
-
-_max = _reduction_factory(np.max)
-_min = _reduction_factory(np.min)
-
-_all = _reduction_factory(np.all)
-_any = _reduction_factory(np.any)
 
 _nanmean = _reduction_factory(np.nanmean)
 _nanstd = _reduction_factory(np.nanstd)
 _nansum = _reduction_factory(np.nansum)
+
+_max = _reduction_factory(np.max)
+_min = _reduction_factory(np.min)
+
+_nanmax = _reduction_factory(np.nanmax)
+_nanmin = _reduction_factory(np.nanmin)
+
+_all = _reduction_factory(np.all)
+_any = _reduction_factory(np.any)
 
 
 

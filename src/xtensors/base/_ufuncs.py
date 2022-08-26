@@ -31,8 +31,9 @@ def _ufunc_factory(_np_func: _ufunc) -> UFunc:
 
 
 def _sigmoid(__x1: np.ndarray):
-    __x = np.where(__x1 < -700., -700., __x1)
-    return 1. / (1. + np.exp(-__x))
+
+    return .5 * (1. + np.tanh(__x1/2))
+
 
 
 

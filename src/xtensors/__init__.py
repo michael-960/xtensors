@@ -1,4 +1,4 @@
-from .base import where, argmax, argmin, softmax, get_rank
+from .base import where,softmax, get_rank
 
 from .base import (diagonal, 
         sum, std, mean, 
@@ -19,9 +19,10 @@ from .base import (
         are_arrays_broadcastable, broadcast_arrays
         )
 
+from .base import  argmax, argmin, nanargmax, nanargmin
 
 from .base import (
-        add, divide, 
+        add, divide, multiply,
         greater, greater_equal,
         less, less_equal,
         equal

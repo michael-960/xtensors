@@ -14,7 +14,7 @@ class Reduction(Functional):
     '''
     def __init__(self, dim: DimLike) -> None:
         self.dim = dim
-        self._reduce: base._reduc.ReductionFunc
+        self._reduce: base._reduc.ReductionFunc | base._reduc_single_dim.SingleDimReductionFunc
         self.name = 'UNIMPLEMENTED_REDUCTION'
 
     def __call__(self, x: NDArray) -> DataArray:
@@ -40,4 +40,32 @@ class Std(Reduction):
         super().__init__(dim)
         self._reduce = base.nanstd if nan else base.std
         self.name = f'Std({dim})'
+
+
+class Max(Reduction):
+    def __init__(self, dim: int | str, nan: bool=True) -> None:
+        super().__init__(dim)
+        self._reduce = base.nanmax if nan else base.max
+        self.name = f'Max({dim})'
+
+
+class Min(Reduction):
+    def __init__(self, dim: int | str, nan: bool=True) -> None:
+        super().__init__(dim)
+        self._reduce = base.nanmin if nan else base.min
+        self.name = f'Max({dim})'
+
+
+class ArgMax(Reduction):
+    def __init__(self, dim: int | str, nan: bool=True) -> None:
+            super().__init__(dim)
+            self._reduce = base.nanargmax if nan else base.argmax
+            self.name = f'ArgMax({dim})'
+
+
+class ArgMin(Reduction):
+    def __init__(self, dim: int | str, nan: bool=True) -> None:
+            super().__init__(dim)
+            self._reduce = base.nanargmin if nan else base.argmin
+            self.name = f'ArgMin({dim})'
 
