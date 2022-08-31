@@ -30,13 +30,16 @@ def _reduction_factory(_np_func: _np_reduction_func) -> ReductionFunc:
         _axis = get_axes(x, dim)
 
         newdims = None
+        coords_map = dict()
         if isinstance(x, DataArray):
             olddims = cast(Tuple[str,...], x.dims)
             newdims = strip_dims(olddims, _axis)
+            for dimkey in newdims:
+                coords_map[dimkey] = x.coords[dimkey]
 
         _y = _np_func(_x, axis=_axis)
 
-        return DataArray(_y, dims=newdims)
+        return DataArray(_y, dims=newdims, coords=coords_map)
     return _reduce
 
 

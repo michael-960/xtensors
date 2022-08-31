@@ -40,8 +40,11 @@ from ._reduc_single_dim import (
     _argmax as argmax,
     _argmin as argmin,
     _nanargmax as nanargmax,
-    _nanargmin as nanargmin
-
+    _nanargmin as nanargmin,
+    _coordmax as coordmax,
+    _coordmin as coordmin,
+    _nancoordmax as nancoordmax,
+    _nancoordmin as nancoordmin
 )
 
 from ._reduc_2to1 import diagonal

@@ -19,7 +19,10 @@ from .base import (
         are_arrays_broadcastable, broadcast_arrays
         )
 
-from .base import  argmax, argmin, nanargmax, nanargmin
+from .base import (
+        argmax, argmin, nanargmax, nanargmin,
+        coordmax, coordmin, nancoordmax, nancoordmin
+        )
 
 from .base import (
         add, divide, multiply,

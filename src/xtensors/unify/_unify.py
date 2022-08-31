@@ -106,6 +106,14 @@ def get_axes(x: NDArray, dim: DimLike|DimsLike|None) -> Tuple[int,...]:
     raise ValueError('Invalid argument combination')
 
 
+def get_coord(x: NDArray, dim: str) -> np.ndarray | None:
+    if isinstance(x, DataArray):
+        return x.coords[dim].__array__()
+    return None
+
+
+
+
 def strip_dims(olddims: Tuple[str, ...], axis: Tuple[int, ...]) -> Tuple[str,...]:
     '''
     (For named dimensions) Remove dimensions corresponding to [axis] from named

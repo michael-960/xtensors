@@ -8,10 +8,21 @@ from xtensors.typing import NDArray
 
 class Functional:
     def __init__(self):
-        self.name : str = 'NOTIMPLEMENTED_FUNCTIONAL'
+        self.name: str = 'NOTIMPLEMENTED_FUNCTIONAL'
 
     def __call__(self, x: NDArray) -> DataArray:
         raise NotImplementedError
+
+
+class Identity(Functional):
+    def __init__(self, name='I'):
+        self.name = name
+
+    def __call__(self, x: NDArray) -> DataArray:
+        if not isinstance(x, DataArray):
+            return DataArray(x)
+
+        return x
 
 
 class Pipe(Functional):

@@ -16,6 +16,7 @@ src/xtensors/base/_misc.py
 src/xtensors/base/_names.py
 src/xtensors/base/_reduc.py
 src/xtensors/base/_reduc_2to1.py
+src/xtensors/base/_reduc_single_dim.py
 src/xtensors/base/_ufuncs.py
 src/xtensors/functionals/__init__.py
 src/xtensors/functionals/base.py

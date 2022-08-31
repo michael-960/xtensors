@@ -8,12 +8,15 @@ from xarray import DataArray
 from xtensors.typing import NDArray
 from xtensors.typing import DimLike, DimsLike
 
-from xtensors.unify import get_axes, strip_dims
+from xtensors.unify import get_axes, strip_dims, get_coord
 
 
 
 def diagonal(x: NDArray, dim1: DimLike, dim2: DimLike, dim_out: str) -> DataArray:
-
+    '''
+        Reduce a tensor x by taking the diagonal elements along [dim1] and
+        [dim2]
+    '''
     assert isinstance(dim1, (str, int, tuple))
     _x = x.__array__()
 
@@ -30,12 +33,18 @@ def diagonal(x: NDArray, dim1: DimLike, dim2: DimLike, dim_out: str) -> DataArra
     if isinstance(x, DataArray):
         olddims = cast(Tuple[str], x.dims)
         newdims = list(strip_dims(olddims, (axis1, axis2)))
+
+        coords_map = dict()
+        for dimkey in newdims:
+            coord = get_coord(x, dimkey)
+            if coord is not None: coords_map[dimkey] = coord
+
         newdims.append(dim_out)
-        return DataArray(y, dims=newdims)
+        
+        
+        return DataArray(y, dims=newdims, coords=coords_map)
     else:
         y_ = DataArray(y)
         y_ = y_.rename({y_.dims[-1]: dim_out})
         return y_
-
-
 

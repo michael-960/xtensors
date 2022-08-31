@@ -58,14 +58,27 @@ class Min(Reduction):
 
 class ArgMax(Reduction):
     def __init__(self, dim: int | str, nan: bool=True) -> None:
-            super().__init__(dim)
-            self._reduce = base.nanargmax if nan else base.argmax
-            self.name = f'ArgMax({dim})'
+        super().__init__(dim)
+        self._reduce = base.nanargmax if nan else base.argmax
+        self.name = f'ArgMax({dim})'
 
 
 class ArgMin(Reduction):
     def __init__(self, dim: int | str, nan: bool=True) -> None:
-            super().__init__(dim)
-            self._reduce = base.nanargmin if nan else base.argmin
-            self.name = f'ArgMin({dim})'
+        super().__init__(dim)
+        self._reduce = base.nanargmin if nan else base.argmin
+        self.name = f'ArgMin({dim})'
 
+
+class CoordMax(Reduction):
+    def __init__(self, dim: int | str, nan: bool=True) -> None:
+        super().__init__(dim)
+        self._reduce = base.nancoordmax if nan else base.coordmax
+        self.name = f'CoordMax({dim})'
+
+
+class CoordMin(Reduction):
+    def __init__(self, dim: int | str, nan: bool=True) -> None:
+        super().__init__(dim)
+        self._reduce = base.nancoordmin if nan else base.coordmin
+        self.name = f'CoordMin({dim})'

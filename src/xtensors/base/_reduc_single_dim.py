@@ -44,3 +44,32 @@ _argmin = _reduction_factory(np.argmin)
 _nanargmax = _reduction_factory(np.nanargmax)
 _nanargmin = _reduction_factory(np.nanargmin)
 
+
+
+def _coord_reduc_factory(_func: SingleDimReductionFunc) -> SingleDimReductionFunc:
+
+    def _reduce(x: NDArray, dim: DimLike) -> DataArray:
+        '''
+            Return the coordinate on [dim] that maximizes/minimizes x If dimension [dim] does
+            not have coordinates, this is equivalent to (nan)argmax/argmin
+        '''
+        if not isinstance(x, DataArray):
+            x_ = DataArray(x)
+        else:
+            x_ = x
+        x_ = cast(DataArray, x)
+            
+        axis = get_axes(x_, dim)[0]
+        args = _func(x_, dim)
+
+        return x_.coords[x_.dims[axis]][args]
+    return _reduce
+
+
+_coordmax = _coord_reduc_factory(_argmax)
+_coordmin = _coord_reduc_factory(_argmin)
+
+
+_nancoordmax = _coord_reduc_factory(_nanargmax)
+_nancoordmin = _coord_reduc_factory(_nanargmin)
+
