@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, List, Protocol, Tuple, cast, Union
+from typing import Any, List, Protocol, Sequence, Tuple, cast, Union
 import numpy as np
 
 import xarray as xr
@@ -58,7 +58,7 @@ def softmax(x: NDArray, dim: DimLike) -> DataArray:
 
 
 
-def get_rank(x: NDArray|list|number) -> int:
+def get_rank(x: NDArray|Sequence[number]|number) -> int:
     if hasattr(x, 'shape'):
         return len(cast(NDArray, x).shape)
 

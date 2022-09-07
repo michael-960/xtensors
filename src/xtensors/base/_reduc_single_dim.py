@@ -73,3 +73,5 @@ _coordmin = _coord_reduc_factory(_argmin)
 _nancoordmax = _coord_reduc_factory(_nanargmax)
 _nancoordmin = _coord_reduc_factory(_nanargmin)
 
+
+

@@ -10,6 +10,7 @@ src/xtensors.egg-info/dependency_links.txt
 src/xtensors.egg-info/requires.txt
 src/xtensors.egg-info/top_level.txt
 src/xtensors/base/__init__.py
+src/xtensors/base/_args.py
 src/xtensors/base/_binary_op.py
 src/xtensors/base/_broadcast.py
 src/xtensors/base/_misc.py
@@ -21,6 +22,9 @@ src/xtensors/base/_ufuncs.py
 src/xtensors/functionals/__init__.py
 src/xtensors/functionals/base.py
 src/xtensors/functionals/reductions.py
+src/xtensors/numpy/__init__.py
+src/xtensors/numpy/_args.py
+src/xtensors/numpy/_np.py
 src/xtensors/typing/__init__.py
 src/xtensors/typing/_indices.py
 src/xtensors/typing/_tensors.py

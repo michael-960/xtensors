@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Optional, Protocol, Tuple, cast
 
 from xtensors.typing import NDArray
@@ -23,7 +24,7 @@ def _apply_operation(x: NDArray, y: NDArray, binop: str, rbinop: Optional[str]=N
             z = getattr(x, binop)(y)
             if z is NotImplemented: raise NotImplementedError
 
-        except AttributeError | NotImplementedError as e:
+        except (AttributeError, NotImplementedError) as e:
             if rbinop is not None:
                 z = getattr(y, rbinop)(x)
                 if z is NotImplemented: raise NotImplementedError
