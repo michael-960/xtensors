@@ -42,3 +42,11 @@ class Pipe(Functional):
         if not isinstance(_y, DataArray):
             _y = DataArray(_y)
         return _y
+
+
+
+
+
+
+
+

@@ -1,44 +1,51 @@
-from __future__ import annotations
-from typing import List, Literal, Optional, Sequence, Tuple, cast
-import numpy as np
+from typing import Literal, Optional, Sequence, Tuple, TypeVar, cast
+
 from xarray import DataArray
+from ..typing import NDArray, DimLike, DimsLike, AxisDimPair
+import numpy as np
 
-from xtensors.typing import DimLike, DimsLike, AxisDimPair
-from xtensors.typing import NDArray
+from ._base import is_named
 
-
-# def dims_to_axes(dims: Tuple[str,...], target_dims: Tuple[str,...]) -> Tuple[int,...]:
-#     '''
-#     Given a tuple of strings, find the indices where target_dims occur. 
-#     '''
-#     res: List[int] = []
-#    
-#     _dims = np.array(dims)
-#
-#     for tdim in target_dims:
-#         index = np.where(_dims == tdim)[0]
-#
-#         index = index.item()
-#         res.append(index)
-#
-#     return tuple(res)
+from ._conv import to_dataarray, to_ndarray
 
 
-def dim_to_axis(dims: Tuple[str,...], target_dim: str) -> int:
+
+def get_dims(x: NDArray) -> Tuple[str|None,...]:
     '''
-    Given a tuple of strings, find the index where target_dim occurs. If there
+    Return a list of dimnesion names for the given tensor
+    Unnamed dimensions yield None
+    '''
+
+    if isinstance(x, DataArray):
+        _dims = []
+        for dim in x.dims:
+            dim = cast(str, dim)
+
+            if not is_named(dim):
+                _dims.append(None)
+            else:
+                _dims.append(dim)
+
+        return tuple(_dims)
+
+    return tuple(None for _ in x.shape)
+
+
+T = TypeVar('T')
+def find_index(objs: Sequence[T], target: T) -> int:
+    '''
+    Given a tuple of objects, find the index where target occurs. If there
     is not exactly one occurrence, an IndexError is raised.
-
     '''
-    _dims = np.array(dims)
+    _dims = np.array(objs)
     
-    index = np.where(_dims == target_dim)[0]
+    index = np.where(_dims == target)[0]
 
     if len(index) == 0:
-        raise IndexError(f'dim {target_dim} is not found')
+        raise IndexError(f'{target} is not found')
 
     if len(index) > 1:
-        raise IndexError(f'dim {target_dim} is ambiguous')
+        raise IndexError(f'{target} is ambiguous')
 
     index = index.item()
     return index
@@ -50,10 +57,13 @@ def get_axis_from_dim(x: NDArray, dim: str, fallback_axis: Optional[int]=None) -
     corresponding axis (int). If not found, the fallback is returned if
     provided, else an IndexError is raised.
     '''
-    try:
-        if isinstance(x, DataArray):
-            return dim_to_axis(cast(Tuple[str,...], x.dims), dim)
 
+
+    try:
+        if not is_named(dim): raise IndexError(f'{dim} is unnamed')
+
+        if isinstance(x, DataArray):
+            return find_index(cast(Tuple[str,...], x.dims), dim)
         raise IndexError(f'trying to locate dimension {dim} but array/tensor is not named')
 
     except IndexError as e:
@@ -107,12 +117,6 @@ def get_axes(x: NDArray, dim: DimLike|DimsLike|None) -> Tuple[int,...]:
     raise ValueError('Invalid argument combination')
 
 
-def get_coord(x: NDArray, dim: str) -> np.ndarray | None:
-    if isinstance(x, DataArray):
-        return x.coords[dim].__array__()
-    return None
-
-
 def strip_dims(olddims: Tuple[str, ...], axis: Tuple[int, ...]) -> Tuple[str,...]:
     '''
     (For named dimensions) Remove dimensions corresponding to [axis] from named
@@ -126,28 +130,18 @@ def strip_dims(olddims: Tuple[str, ...], axis: Tuple[int, ...]) -> Tuple[str,...
     return tuple(newdims)
 
 
-
-
 def rename(x: NDArray, dim: DimLike, newname: str) -> DataArray:
     '''
     Rename a dimension. If the original array is unnamed, a named array will be
     returned.
     '''
-    if isinstance(x, DataArray):
-        _axis = get_axes(x, dim)[0]
-        _dim = x.dims[_axis]
-        return x.rename({_dim: newname})
 
-    _x = x.__array__()
-    _x = DataArray(_x)
+    if not is_named(newname): raise ValueError(f'Invalid dimension name: {newname}')
 
-    if isinstance(dim, int):
-        return _x.rename({_x.dims[dim]: newname})
-
-    if isinstance(dim, tuple):
-        return _x.rename({_x.dims[dim[0]]: newname})
-
-    raise ValueError
+    x_ = to_dataarray(x)
+    _axis = get_axes(x_, dim)[0]
+    _dim = get_dims(x)[_axis]
+    return x_.rename({_dim: newname})
 
 
 def new_axes(x: NDArray, *dims: str, position: Literal['before','after']='after') -> DataArray:
@@ -168,17 +162,17 @@ def new_axes(x: NDArray, *dims: str, position: Literal['before','after']='after'
 def new_axis(x: NDArray, dim: str, position: Literal['before','after']='after') -> DataArray:
     _x = to_dataarray(x)
     dims = list(_x.dims)
-    _x = x.__array__()
+    _x = to_ndarray(_x)
 
     if position == 'before':
         _x = _x[None,...]
-        _x = DataArray(_x, dims=['dims_appended_tmp'] + dims)
+        _x = DataArray(_x, dims=['__dims_appended_tmp'] + dims)
         _x = rename(_x, 0, dim)
         return _x
 
     if position == 'after':
         _x = _x[...,None]
-        _x = DataArray(_x, dims=dims + ['dims_appended_tmp'])
+        _x = DataArray(_x, dims=dims + ['__dims_appended_tmp'])
         _x = rename(_x, -1, dim)
         return _x
 

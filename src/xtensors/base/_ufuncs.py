@@ -8,6 +8,8 @@ from xarray import DataArray
 from xtensors.typing import NDArray
 import torch
 
+from ..unify import to_dataarray, to_ndarray
+
 
 class _ufunc(Protocol):
     def __call__(self, __x1: np.ndarray, *args) -> np.ndarray: ...
@@ -20,15 +22,11 @@ class UFunc(Protocol):
 
 def _ufunc_factory(_np_func: _ufunc) -> UFunc:
     def _f(x: NDArray) -> DataArray:
-        _x = np.array(x)
-        _y = _np_func(_x)
-        _dims = None
-        
-        if isinstance(x, DataArray):
-            _dims = x.dims
-        return DataArray(_y, dims=_dims)
+        _x = to_dataarray(x)
+        _y = _np_func(to_ndarray(_x))
+        _x.data = _y
+        return _x
     return _f
-
 
 def _sigmoid(__x1: np.ndarray):
 
