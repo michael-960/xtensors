@@ -15,8 +15,9 @@ def _confmat(X: np.ndarray, Y: np.ndarray, /, *, n_classes: int) -> np.ndarray:
 
 
 def confusion_matrix(
-        target_dim: str, class_truth_dim: str, class_pred_dim: str, n_classes: int
-        ): 
+        target_dim: str,
+        class_truth_dim: str, class_pred_dim: str, n_classes: int
+    ): 
 
     def convert(dims: xtt.Dims, coords: xtt.Coords):
         return dims[:-1] + [class_truth_dim, class_pred_dim], coords[:-1] + [None, None]

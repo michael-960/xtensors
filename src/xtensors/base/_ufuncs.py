@@ -11,7 +11,7 @@ class _ufunc(Protocol):
 
 
 class UFunc(Protocol):
-    def __call__(self, x: xtt.Array, /) -> xtt.XTensor: ...
+    def __call__(self, x: xtt.TensorLike, /) -> xtt.XTensor: ...
 
 
 def _ufunc_factory(_np_func: _ufunc) -> UFunc:
@@ -25,7 +25,6 @@ def _sigmoid(__x1: np.ndarray):
     return .5 * (1. + np.tanh(__x1/2))
 
 sigmoid = _ufunc_factory(_sigmoid)
-
 
 exp = _ufunc_factory(np.exp)
 

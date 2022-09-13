@@ -38,7 +38,6 @@ class AxisSelector:
         return self._label
 
 
-
 class DimNameSelector(AxisSelector):
     def __init__(self, dimname: str, 
             required: bool=False, channel: Optional[str]=None

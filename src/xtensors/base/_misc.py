@@ -4,12 +4,9 @@ from typing import Any
 import numpy as np
 import numpy.typing as npt
 
-
-# from ._broadcast import broadcast_arrays
-
-
 from .. import tensor as xtt
 from scipy import special
+
 
 
 @xtt.generalize_3
@@ -20,10 +17,8 @@ def where(condition: npt.NDArray, x: npt.NDArray, y: npt.NDArray, /) -> npt.NDAr
     return np.where(condition, x, y)
 
 
-
-
 @xtt.generalize_1
-def softmax(X: xtt.XTensor, /, dim: str) -> xtt.XTensor:
+def softmax(X: xtt.XTensor, /, dim: xtt.DimLike) -> xtt.XTensor:
     axis = X.get_axis(dim)
     _y = special.softmax(X.data, axis=axis)
     return xtt.XTensor(_y, dims=X.dims, coords=X.coords)
@@ -40,5 +35,4 @@ def get_rank(x: Any) -> int:
         return get_rank(x[0]) + 1
 
     return 0
-
 
