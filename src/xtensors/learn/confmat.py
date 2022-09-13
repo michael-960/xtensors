@@ -2,7 +2,7 @@ from collections.abc import Callable
 from typing_extensions import ParamSpec
 import numpy as np
 
-from ..tensor import with_broadcast, XTensor, generalize_2
+from ..tensor import promote_binary_operator, XTensor, generalize_2
 from ..tensor.typing import Function_2Args, Dims, Coords
 
 

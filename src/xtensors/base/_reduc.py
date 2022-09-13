@@ -8,38 +8,28 @@ from xtensors.typing import AxisDimPair, DimLike, DimsLike
 
 from xtensors.unify import get_axes, strip_dims
 
+from .. import tensor as xtt
+
+
 '''
 For reduction functions that can act over multiple axes/dims.
 '''
 
-
 class _np_reduction_func(Protocol):
-    def __call__(self, a: NDArray, axis: int|Tuple[int,...]) -> DataArray: ...
+    def __call__(self, a: np.ndarray, axis: int|Tuple[int,...]) -> np.ndarray: ...
 
 
 class ReductionFunc(Protocol):
-    def __call__(self, x: NDArray, dim: DimLike|DimsLike|None) -> DataArray: ...
-
-
+    def __call__(self, x: xtt.Array,/, dim: xtt.DimLike|xtt.DimsLike|None) -> xtt.XTensor: ...
 
 
 def _reduction_factory(_np_func: _np_reduction_func) -> ReductionFunc:
-    def _reduce(x: NDArray, dim: DimLike|DimsLike|None=None) -> DataArray:
+    @xtt.generalize_1
+    def _reduce(X: xtt.XTensor, /, dim: xtt.DimLike|xtt.DimsLike|None=None) -> xtt.XTensor:
+        axes = X.get_axes(dim)
+        _y = _np_func(X.data, axis=tuple(axes))
 
-        _x = x.__array__()
-        _axis = get_axes(x, dim)
-
-        newdims = None
-        coords_map = dict()
-        if isinstance(x, DataArray):
-            olddims = cast(Tuple[str,...], x.dims)
-            newdims = strip_dims(olddims, _axis)
-            for dimkey in newdims:
-                coords_map[dimkey] = x.coords[dimkey]
-
-        _y = _np_func(_x, axis=_axis)
-
-        return DataArray(_y, dims=newdims, coords=coords_map)
+        return xtt.XTensor(_y, dims=xtt.strip(X.dims, axes), coords=xtt.strip(X.coords, axes))
     return _reduce
 
 
@@ -59,6 +49,5 @@ _nanmin = _reduction_factory(np.nanmin)
 
 _all = _reduction_factory(np.all)
 _any = _reduction_factory(np.any)
-
 
 

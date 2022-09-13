@@ -24,4 +24,3 @@ class CoordMerger(Protocol):
 class Broadcaster(Protocol):
     def __call__(self,
             X: XTensor, Y: XTensor) -> Tuple[np.ndarray, np.ndarray, List[str|None], List[Sequence[Any]|None]]: ...
-

@@ -1,12 +1,11 @@
 from ._base import XTensor
 
-from .typing import BinaryOperator
 
-from ._decors import with_broadcast, generalize_1, generalize_2, generalize_3
+from ._decors import promote_binary_operator
 
 
-from .basic_utils import (
-    permute, newdims, align, shapes_broadcastable,
-    mergedims, flatten, dimsfirst, dimslast,
-    mergecoords
-    )
+from .broadcast import *
+
+from .basic_utils import *
+
+from .typing import *

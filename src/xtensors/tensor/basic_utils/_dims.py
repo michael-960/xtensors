@@ -1,17 +1,22 @@
 from __future__ import annotations
-from typing import List, Literal, Sequence
-from .._base import XTensor
+from typing import TYPE_CHECKING, List, Literal, Sequence
 from ..typing import Dims
 
 from ... import numpy as xtnp
 
 from ._axes import permute
 
+from ._generalize import generalize_1, generalize_2, generalize_3
+
+
+if TYPE_CHECKING: from .._base import XTensor
 
 
 def mergedims(X: XTensor|Dims, Y: XTensor|Dims) -> Dims:
     '''
     '''
+
+    from .._base import XTensor
 
     if isinstance(X, XTensor): dims_x = list(X.dims)
     else: dims_x = X
@@ -56,7 +61,8 @@ def dimsfirst(X: XTensor, dims: Sequence[str]) -> XTensor:
     return permute(X, axes+other_axes)
 
 
-def flatten(X: XTensor, dims: Sequence[str], dim_out: str|None, position: Literal['left', 'right']='right'):
+def flatten(X: XTensor, dims: Sequence[str], dim_out: str|None, position: Literal['left', 'right']='right') -> XTensor:
+    from .._base import XTensor
     x = X.data
     axes = [X.get_axis(dim) for dim in dims]
 
@@ -76,6 +82,24 @@ def flatten(X: XTensor, dims: Sequence[str], dim_out: str|None, position: Litera
     else:
         Y = XTensor(x_flat, remaining_dims+[dim_out], remaining_coords+[coord_out])
         return Y
+
+
+@generalize_1
+def name_dim_if_absent(X: XTensor, /, axis: int, dim: str, *, force: bool=False) -> XTensor:
+    '''
+    Ensure that X has a named dimension called [dim]. If not already, the
+    dimension at [axis] will be named so.
+    '''
+    X1 = X.viewcopy()
+    if dim in X.dims:
+        return X1
+
+    if X1.dims[axis] is not None and not force:
+        raise ValueError(f'Tensor already has its dimension named {X1.dims[axis]} at axis={axis}')
+
+    X1.set_dim(axis, dim)
+    return X1
+
 
 
 

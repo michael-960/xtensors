@@ -17,11 +17,16 @@ def unilateral_dimcast(strict: bool=False) -> Dimcaster:
         return [i for i in range(X.rank)], axesp
     return _dimcast
 
+def trivial_dimcast(X: XTensor, Y: XTensor):
+    axes_x: List[int|None] = [i for i in range(X.rank)]
+    axes_y: List[int|None] = [i for i in range(Y.rank)]
+    return axes_x, axes_y
+
 
 def castdim(target: XTensor, subject: XTensor, strict: bool=False) -> AxesPermutation:
     '''
     Cast the dimensions of subject so that the two tensors are ready to be
-    broadcast together
+    broadcast together.
     '''
 
     dims_t = list(target.dims)

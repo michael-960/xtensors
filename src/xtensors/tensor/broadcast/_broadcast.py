@@ -1,13 +1,20 @@
 from __future__ import annotations
 import numpy as np
 
-from typing import Tuple
+from typing import TYPE_CHECKING, Callable, Literal, Sequence, Tuple, overload
 
-from .._base import XTensor
 from ..typing import Dims, Coords
-from ..basic_utils import permute, align, shapes_broadcastable
+from ..basic_utils import permute, align, shapes_broadcastable, mergecoords, mergedims
 
 from ._types import Broadcaster, Dimcaster, DimMerger, CoordMerger
+
+from ._dimcast import unilateral_dimcast, trivial_dimcast
+
+from ._template import Template
+
+
+if TYPE_CHECKING:
+    from .._base import XTensor
 
 
 
@@ -55,6 +62,59 @@ def broadcast(X: XTensor, Y: XTensor,
     return X1.data, Y1.data, newdims, newcoords
 
 
+unilateral_broadcaster = broadcaster_wrapper(
+            dimcast=unilateral_dimcast(strict=False),
+            dimmerge=mergedims, coordmerge=mergecoords
+)
+'''
+This broadcaster takes the second tensor and permutes its dimensions to match
+the first one. The algorithm for finding the permutation is defined by
+unilateral_dimcast()
+'''
+
+
+vanilla_broadcaster = broadcaster_wrapper(
+            dimcast=trivial_dimcast,
+            dimmerge=mergedims, coordmerge=mergecoords
+)
+'''
+Vanilla broadcaster: the same as what's used in torch's named tensors.
+Dimension names (or None) have to match at the same axis position.
+'''
+
+
+def template_broadcaster(dims: Sequence[str|int], channels: Sequence[Literal['x','y']|None]) -> Broadcaster:
+    '''
+    Return a template broadcaster with the specified dimensions and channels
+    '''
+
+    template = Template.from_dims_channels(dims, channels)
+    
+    def _broadcast(X: XTensor, Y: XTensor):
+        X1 = template.cast_and_update(X, 'x')
+        Y1 = template.cast_and_update(Y, 'y')
+
+        dims, coords = template.dims, template.coords
+        template.clear()
+        return X1.data, Y1.data, dims, coords
+
+    # _broadcast.cast = lambda x, y: y
+
+    return _broadcast
+
+
+@overload
+def cast(broadcaster: Broadcaster, X: XTensor) -> Callable[[XTensor], XTensor]: ...
+@overload
+def cast(broadcaster: Broadcaster, X: XTensor, Y: XTensor) -> XTensor: ...
+
+def cast(broadcaster: Broadcaster, X: XTensor, Y: XTensor|None=None):
+    if Y is None:
+        def _cast(Y1: XTensor,/):
+            x, _y, dims, coords = broadcaster(X, Y1)
+            return Y1.__class__(_y, dims, coords)
+        return _cast
+    return cast(broadcaster, X)(Y)
 
 
 

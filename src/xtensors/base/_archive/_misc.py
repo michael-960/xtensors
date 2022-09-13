@@ -1,15 +1,16 @@
 from __future__ import annotations
 
-from typing import Any, cast, Union
+from typing import Any, List, Protocol, Sequence, Tuple, cast, Union
 import numpy as np
 
+import xarray as xr
 from xarray import DataArray
-from xtensors.typing import NDArray, number
+from xtensors.typing import NDArray, number, DimLike
 
 from ._broadcast import broadcast_arrays
 
+from xtensors.unify import get_axis_from_dim, strip_dims, get_axes
 
-from .. import tensor as xtt
 from scipy import special
 
 
@@ -44,21 +45,25 @@ def where(condition: NDArray, x: NDArray|number, y: NDArray|number) -> DataArray
     return DataArray(_z, dims=dims)
 
 
-@xtt.generalize_1
-def softmax(X: xtt.XTensor, /, dim: str) -> xtt.XTensor:
-    axis = X.get_axis(dim)
-    _y = special.softmax(X.data, axis=axis)
-    return xtt.XTensor(_y, dims=X.dims, coords=X.coords)
+def softmax(x: NDArray, dim: DimLike) -> DataArray:
+
+    axis = get_axes(x, dim)[0]
+    _y = special.softmax(x.__array__(), axis=axis)
+
+    dims = None
+    if isinstance(x, DataArray):
+        dims = list(x.dims)
+
+    return DataArray(_y, dims=dims)
 
 
-def get_rank(x: Any) -> int:
+
+
+def get_rank(x: NDArray|Sequence[number]|number) -> int:
     if hasattr(x, 'shape'):
-        return len(x.shape)
+        return len(cast(NDArray, x).shape)
 
-    if hasattr(x, '__array__'):
-        return get_rank(x.__array__())
-
-    if isinstance(x, (list, tuple)):
+    if isinstance(x, list):
         return get_rank(x[0]) + 1
 
     return 0

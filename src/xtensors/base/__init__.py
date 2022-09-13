@@ -36,7 +36,7 @@ from ._reduc import (
 )
 
 
-from ._reduc_single_dim import (
+from ._arg import (
     _argmax as argmax,
     _argmin as argmin,
     _nanargmax as nanargmax,
@@ -50,8 +50,7 @@ from ._reduc_single_dim import (
 from ._reduc_2to1 import diagonal
 
 
-
-from ._ufuncs import cos, cosh, exp, log, log10, sigmoid, sin, sinh, tan, tanh 
+from ._ufuncs import cos, cosh, exp, log, log2, log10, sigmoid, sin, sinh, tan, tanh 
 
 
 

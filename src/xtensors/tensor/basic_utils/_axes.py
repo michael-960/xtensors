@@ -2,20 +2,27 @@ from __future__ import annotations
 from functools import wraps
 import numpy as np
 
-from typing import List, Literal, Sequence, Tuple
-from .._base import XTensor
+from typing import TYPE_CHECKING, List, Literal, Sequence, Tuple
 from ..typing import AxesPermutation, Dims, Coords
 
+if TYPE_CHECKING: from .._base import XTensor
 
-def permutation_well_defined(axes: AxesPermutation) -> bool:
+
+def permutation_well_defined(axes: AxesPermutation, rank: int|None=None) -> bool:
     axes_nnon = [axis for axis in axes if axis is not None]
-    return len(axes_nnon) == len(set(axes_nnon))
+    condition = (len(axes_nnon) == len(set(axes_nnon)))
+
+    if rank is not None:
+        condition = condition and all([axis in axes_nnon for axis in range(rank)])
+
+    return condition
 
 
 def permute(X: XTensor, axes: AxesPermutation) -> XTensor:
     '''
-
+    
     '''
+    from .._base import XTensor
 
     data_ = X.data
     axes = axes.copy()
@@ -50,6 +57,7 @@ def newdims(X: XTensor,
     Pad singleton dimensions to the given tensor with the specified dimension
     names and coordinates.
     ''' 
+    from .._base import XTensor
     if dims is not None and coords is not None:
         assert len(dims) == len(coords)
 
@@ -101,8 +109,3 @@ def shapes_broadcastable(a: Sequence[int], b: Sequence[int]) -> bool:
     for sa, sb in zip(a[::-1], b[::-1]):
         if sa != sb and sa != 1 and sb != 1: return False
     return True
-
-
-
-
-

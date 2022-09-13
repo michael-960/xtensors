@@ -1,15 +1,16 @@
 from __future__ import annotations
-from typing import Any, List, Sequence
+from typing import TYPE_CHECKING, Any, List, Sequence
 import numpy as np
-from .._base import XTensor
 
 from ..typing import Coords
-
+if TYPE_CHECKING: from .._base import XTensor
 
 
 def mergecoords(X: XTensor|Coords, Y: XTensor|Coords, rtol: float=1e-8, atol: float=1e-8) -> Coords:
     '''
     '''
+
+    from .._base import XTensor
 
     if isinstance(X, XTensor): coords_x = list(X.coords)
     else: coords_x = X

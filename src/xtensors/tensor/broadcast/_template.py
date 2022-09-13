@@ -1,4 +1,5 @@
 from __future__ import annotations
+from abc import abstractmethod
 
 '''
 Template Broadcaster:
@@ -7,10 +8,12 @@ Template Broadcaster:
 
 '''
 
-from typing import List, Literal, Optional, Sequence, Union
+from typing import TYPE_CHECKING, List, Literal, Optional, Sequence, Union
 import numpy as np
 from ._types import Broadcaster
-from .._base import XTensor
+
+if TYPE_CHECKING:
+    from .._base import XTensor
 
 from ..typing import Dims, Coords
 from ..basic_utils import permute, permutation_well_defined, mergecoords, mergedims
@@ -19,25 +22,21 @@ from ..basic_utils import permute, permutation_well_defined, mergecoords, merged
 Channel = Union[str, None]
 
 
-def template_broadcast(dims: Sequence[Union[str, int]], channels: Sequence[Literal['x','y']|None]) -> Broadcaster:
-
-    template = Template.from_dims_channels(dims, channels)
-    
-    def _broadcast(X: XTensor, Y: XTensor):
-        X1 = template.cast_and_update(X, 'x')
-        Y1 = template.cast_and_update(Y, 'y')
-
-        dims, coords = template.dims, template.coords
-        template.clear()
-        return X1.data, Y1.data, dims, coords
-
-    return _broadcast
-
-
-
 class AxisSelector:
-    def __init__(self) -> None: ...
-    def select_axis(self, X: XTensor, channel: str) -> int|None: ...
+    def __init__(self) -> None:
+        self._label: str
+        self.channel: str|None
+
+    @abstractmethod
+    def select_axis(self, X: XTensor, channel: str|None=None) -> int|None:
+        '''
+        Select an axis from the tensor X
+        '''
+
+    @property
+    def label(self) -> str:
+        return self._label
+
 
 
 class DimNameSelector(AxisSelector):
@@ -47,8 +46,9 @@ class DimNameSelector(AxisSelector):
         self.dimname = dimname
         self.required = required
         self.channel = channel
+        self._label = dimname
 
-    def select_axis(self, X: XTensor, channel: str) -> int|None:
+    def select_axis(self, X: XTensor, channel: str|None=None) -> int|None:
         if self.channel is not None and channel != self.channel:
             return None
         try:
@@ -58,13 +58,15 @@ class DimNameSelector(AxisSelector):
             return None
 
 
+
 class IndexSelector(AxisSelector):
     def __init__(self, axis: int, channel: Optional[str]=None) -> None:
         self.axis = axis
         self.channel = channel
+        self._label = str(axis)
 
 
-    def select_axis(self, X: XTensor, channel: str) -> int | None:
+    def select_axis(self, X: XTensor, channel: str|None=None) -> int | None:
         if self.channel is not None and channel != self.channel:
             return None
         
@@ -76,16 +78,27 @@ class IndexSelector(AxisSelector):
 
 class Template:
     def __init__(self, *selectors: AxisSelector) -> None:
+
+        try:
+            for sel in selectors: assert isinstance(sel, AxisSelector)
+        except AssertionError as e:
+            raise TypeError('selectors must be instances of AxisSelector') from e
+
         self.selectors = selectors
         self._dims: Dims
         self._coords: Coords
         self.clear()
         self.check_well_defined()
 
+
     @classmethod
     def from_dims_channels(
-            cls, dims: Sequence[Union[str, int]], channels: Sequence[str|None]) -> Template:
+            cls, dims: Sequence[Union[str, int]], channels: Sequence[str|None]|None) -> Template:
         selectors = []
+
+        if channels is None: channels = [None for _ in range(len(dims))]
+
+        assert len(dims) == len(channels)
 
         for d, c in zip(dims, channels):
             if isinstance(d, str):
@@ -102,10 +115,9 @@ class Template:
         axes = [sel.axis for sel in self.selectors if isinstance(sel, IndexSelector)]
         assert len(axes) == len(set(axes))
 
-    def cast_and_update(self, X: XTensor, channel: str) -> XTensor:
+    def cast_and_update(self, X: XTensor, channel: str|None=None) -> XTensor:
         axesp = [sel.select_axis(X, channel) for sel in self.selectors]
-        assert permutation_well_defined(axesp)
-        print(axesp)
+        assert permutation_well_defined(axesp, X.rank), 'Casting impossible'
 
         X1 = permute(X, axesp)
 
@@ -125,4 +137,21 @@ class Template:
     @property
     def coords(self) -> Coords:
         return self._coords
+
+    def __repr__(self) -> str:
+        s = 'Dimension Template'
+        s1 = 'dim.    '
+        s2 = 'channel '
+
+        for selector in self.selectors:
+            label = selector.label
+            channel = str(selector.channel)
+
+            width = max(len(label), len(channel)) + 1
+
+            s1 += f'{label:{width}}'
+            s2 += f'{channel:{width}}'
+
+
+        return s + '\n' + s1 + '\n' + s2
 
