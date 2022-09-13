@@ -18,7 +18,6 @@ def mergecoords(X: XTensor|Coords, Y: XTensor|Coords, rtol: float=1e-8, atol: fl
     if isinstance(Y, XTensor): coords_y = list(Y.coords)
     else: coords_y = Y
 
-
     rank_x, rank_y = len(coords_x), len(coords_y)
 
     if rank_x < rank_y: return mergecoords(Y, X)

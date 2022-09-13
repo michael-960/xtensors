@@ -4,6 +4,7 @@ from typing import Any, Callable, Generic, List, Protocol, Sequence, Tuple, Type
 from typing_extensions import ParamSpec
 
 import numpy as np
+import numpy.typing as npt
 
 T_con = TypeVar('T_con', contravariant=True)
 T_co = TypeVar('T_co', covariant=True)
@@ -20,7 +21,7 @@ DimLike = Union[str,int,Tuple[str,int]]
 DimsLike = List[DimLike]
 
 Dims = List[Union[str,None]]
-Coords = List[Union[Sequence[Any],None]]
+Coords = List[Union[npt.NDArray[Any],None]]
 
 
 class Function_1Arg(Protocol[T_con, O, T_co]):

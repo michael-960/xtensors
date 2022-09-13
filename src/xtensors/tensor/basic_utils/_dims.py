@@ -1,15 +1,16 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, List, Literal, Sequence
-from ..typing import Dims
 
 from ... import numpy as xtnp
 
 from ._axes import permute
 
-from ._generalize import generalize_1, generalize_2, generalize_3
+from ._generalize import generalize_1
 
 
-if TYPE_CHECKING: from .._base import XTensor
+if TYPE_CHECKING:
+    from .._base import XTensor
+    from ..typing import DimsLike, DimLike, Dims
 
 
 def mergedims(X: XTensor|Dims, Y: XTensor|Dims) -> Dims:
@@ -61,14 +62,17 @@ def dimsfirst(X: XTensor, dims: Sequence[str]) -> XTensor:
     return permute(X, axes+other_axes)
 
 
-def flatten(X: XTensor, dims: Sequence[str], dim_out: str|None, position: Literal['left', 'right']='right') -> XTensor:
+def flatten(X: XTensor, 
+        dims: DimsLike, dim_out: str|None,
+        position: Literal['left', 'right']='right') -> XTensor:
+
     from .._base import XTensor
     x = X.data
-    axes = [X.get_axis(dim) for dim in dims]
+    # axes = [X.get_axis(dim) for dim in dims]
+    axes = X.get_axes(dims)
 
-    remaining_dims = [dim for axis, dim in enumerate(X.dims ) if axis not in axes]
+    remaining_dims = [dim for axis, dim in enumerate(X.dims) if axis not in axes]
     remaining_coords = [coord for axis, coord in enumerate(X.coords) if axis not in axes]
-
 
     # TODO: implement coordinate meshgrid
     coord_out = None
