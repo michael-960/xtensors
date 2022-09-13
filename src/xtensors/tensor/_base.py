@@ -9,13 +9,20 @@ from .typing import BinaryOperator, DimLike, DimsLike
 
 from ._decors import promote_binary_operator
 
+from .basic_utils._base import to_xtensor
+
 
 def inject_broadcast(broadcaster: Broadcaster):
     promote = promote_binary_operator(broadcaster)
     def wrapper(f: Callable[[XTensor], BinaryOperator[np.ndarray]]):
-        def wrapped(self: XTensor, other: XTensor, /):
+        def wrapped(self: XTensor, other: Any, /):
             binop = promote(f(self))
-            return binop(self, other)
+            if isinstance(other, XTensor):
+                return binop(self, other)
+            try:
+                return binop(self, to_xtensor(other))
+            except TypeError:
+                return NotImplemented
         return wrapped
     return wrapper
 
@@ -110,7 +117,6 @@ class XTensor:
             self._coords = [None for _ in self.data.shape]
         else:
             coords_clean: List[NDArray[Any]|None] = []
-            coords = list(coords)
             assert len(coords) == len(self.data.shape)
             for axis, coord in enumerate(coords):
                 if coord is not None:
@@ -118,7 +124,6 @@ class XTensor:
                     coords_clean.append(np.array(coords[axis]))
                 else:
                     coords_clean.append(None)
-
             self._coords = coords_clean
 
     def set_coord(self, axis: int, coord: Sequence[Any]|NDArray[Any]|None) -> None:
@@ -152,6 +157,12 @@ class XTensor:
 
     @inject_broadcast(vanilla_broadcaster)
     def __radd__(self): return lambda X, Y: X+Y
+
+    @inject_broadcast(vanilla_broadcaster)
+    def __sub__(self): return lambda X, Y: X-Y
+
+    @inject_broadcast(vanilla_broadcaster)
+    def __rsub__(self): return lambda X, Y: Y-X
 
     @inject_broadcast(vanilla_broadcaster)
     def __mul__(self): return lambda X, Y: X*Y

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from numbers import Real
 from typing import Any, Callable, Generic, List, Protocol, Sequence, Tuple, TypeVar, Union
 from typing_extensions import ParamSpec
 
@@ -18,10 +19,8 @@ means that a new axis of length 1 is to be created at the corresponding index.
 DimLike = Union[str,int,Tuple[str,int]]
 DimsLike = List[DimLike]
 
-
 Dims = List[Union[str,None]]
 Coords = List[Union[Sequence[Any],None]]
-
 
 
 class Function_1Arg(Protocol[T_con, O, T_co]):
@@ -42,4 +41,20 @@ class Array(Protocol):
 
 class BinaryOperator(Protocol[T]):
     def __call__(self, X: T, Y: T, /) -> T: ...
+
+
+class TernaryOperator(Protocol[T]):
+    def __call__(self, X: T, Y: T, Z: T, /) -> T: ...
+
+
+
+TensorLike = Union[Array, List, float]
+
+
+
+
+
+
+
+
 

@@ -1,18 +1,19 @@
 from __future__ import annotations
 from functools import wraps
 import numpy as np
+import numpy.typing as npt
 from typing import TYPE_CHECKING, Callable, Sequence, Tuple 
 from typing_extensions import ParamSpec
 
 
-from .typing import BinaryOperator, Array, Function_1Arg, Function_2Args, Function_3Args, Dims, Coords
+from .typing import BinaryOperator, Dims, Coords, TernaryOperator
 
 from .broadcast._types import Broadcaster
 
-from .broadcast._broadcast import broadcaster_wrapper
+from .broadcast._broadcast import broadcaster_wrapper, vanilla_broadcaster, cast
 from .broadcast._dimcast import unilateral_dimcast
 
-from .basic_utils import mergedims, mergecoords, dimslast, dimsfirst, to_xtensor
+from .basic_utils import mergedims, mergecoords
 
 if TYPE_CHECKING:
     from ._base import XTensor
@@ -20,20 +21,16 @@ if TYPE_CHECKING:
 
 O = ParamSpec('O')
 
-def promote_binary_operator(broadcaster: Broadcaster|None=None, 
-    dimcoord_converter: Callable[[Dims, Coords], Tuple[Dims, Coords]]|None=None,
-    ) -> Callable[[BinaryOperator[np.ndarray]], BinaryOperator[XTensor]]:
+def promote_binary_operator(
+        broadcaster: Broadcaster|None=None, 
+        dimcoord_converter: Callable[[Dims, Coords], Tuple[Dims, Coords]]|None=None,
+    ) -> Callable[[BinaryOperator[npt.NDArray]], BinaryOperator[XTensor]]:
     '''
-    Promote NDArray binary operators to XTensor binary operator
+    Promote an NDArray binary operator to XTensor binary operator
     '''
+    if broadcaster is None: broadcaster = vanilla_broadcaster
 
-    if broadcaster is None:
-        broadcaster = broadcaster_wrapper(
-            dimcast=unilateral_dimcast(strict=False),
-            dimmerge=mergedims, coordmerge=mergecoords
-        )
-
-    def wrapper(f: BinaryOperator[np.ndarray]) -> BinaryOperator[XTensor]:
+    def wrapper(f: BinaryOperator[npt.NDArray]) -> BinaryOperator[XTensor]:
         @wraps(f)
         def wrapped(X: XTensor, Y: XTensor, /) -> XTensor:
             from ._base import XTensor
@@ -48,4 +45,31 @@ def promote_binary_operator(broadcaster: Broadcaster|None=None,
     return wrapper
 
 
+def promote_ternary_operator() -> Callable[[TernaryOperator[npt.NDArray]], TernaryOperator[XTensor]]:
+    '''
+    Promote an NDArray ternary operator to XTensor ternary operator using
+    vanilla broadcaster
+    '''
+    broadcaster = vanilla_broadcaster
+    def wrapper(f: TernaryOperator[npt.NDArray]) -> TernaryOperator[XTensor]:
+        @wraps(f)
+        def wrapped(X: XTensor, Y: XTensor, Z: XTensor, /) -> XTensor:
+            from ._base import XTensor
 
+            largest = X
+            if X.rank < Y.rank: largest = Y
+            if largest.rank < Z.rank: largest = Z
+
+            _cast = cast(broadcaster, largest)
+
+            X1 = _cast(X)
+            Y1 = _cast(Y)
+            Z1 = _cast(Z)
+            res_data = f(X1.data, Y1.data, Z1.data)
+
+            dims = mergedims(mergedims(X, Y), Z)
+            coords = mergecoords(mergecoords(X, Y), Z)
+
+            return XTensor(res_data, dims, coords)
+        return wrapped
+    return wrapper

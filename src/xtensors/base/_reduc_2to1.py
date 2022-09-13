@@ -1,11 +1,7 @@
 from __future__ import annotations
-from typing import cast, overload, Tuple, Protocol, Any
 
 import numpy as np
 
-from xarray import DataArray
-
-from xtensors.unify import get_axes, strip_dims, get_coord
 from .. import tensor as xtt
 
 

@@ -15,25 +15,25 @@ from ._base import to_xtensor
 
 if TYPE_CHECKING:
     from .._base import XTensor
-    from ..typing import Array, Function_1Arg, Function_2Args, Function_3Args
+    from ..typing import Array, Function_1Arg, Function_2Args, Function_3Args, TensorLike
 
 O = ParamSpec('O')
 T = TypeVar('T')
 
-def generalize_1(func: Function_1Arg[XTensor, O, T]) -> Function_1Arg[Array, O, T]:
+def generalize_1(func: Function_1Arg[XTensor, O, T]) -> Function_1Arg[TensorLike, O, T]:
     @wraps(func)
-    def wrapped(X: Array, /, *args: O.args, **kwargs: O.kwargs) -> T:
+    def wrapped(X: TensorLike, /, *args: O.args, **kwargs: O.kwargs) -> T:
         return func(to_xtensor(X), *args, **kwargs)
     return wrapped
 
-def generalize_2(func: Function_2Args[XTensor, O, T]) -> Function_2Args[Array, O, T]:
+def generalize_2(func: Function_2Args[XTensor, O, T]) -> Function_2Args[TensorLike, O, T]:
     @wraps(func)
-    def wrapped(X: Array, Y: Array, /, *args: O.args, **kwargs: O.kwargs) -> T:
+    def wrapped(X: TensorLike, Y: TensorLike, /, *args: O.args, **kwargs: O.kwargs) -> T:
         return func(to_xtensor(X), to_xtensor(Y), *args, **kwargs)
     return wrapped
 
-def generalize_3(func: Function_3Args[XTensor, O, T]) -> Function_3Args[Array, O, T]:
+def generalize_3(func: Function_3Args[XTensor, O, T]) -> Function_3Args[TensorLike, O, T]:
     @wraps(func)
-    def wrapped(X: Array, Y: Array, Z: Array, /, *args: O.args, **kwargs: O.kwargs) -> T:
+    def wrapped(X: TensorLike, Y: TensorLike, Z: TensorLike, /, *args: O.args, **kwargs: O.kwargs) -> T:
         return func(to_xtensor(X), to_xtensor(Y), to_xtensor(Z), *args, **kwargs)
     return wrapped

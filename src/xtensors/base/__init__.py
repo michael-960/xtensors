@@ -1,4 +1,8 @@
 
+
+
+from ._misc import where, softmax, get_rank
+
 from ._binary_op import (
     _add as add,
     _divide as divide,
@@ -9,14 +13,6 @@ from ._binary_op import (
     _less as less,
     _less_equal as less_equal,
     _equal as equal,
-)
-
-from ._misc import where, softmax, get_rank
-
-from ._broadcast import (
-    are_shapes_broadcastable, broadcast_shapes,
-    are_xarrays_broadcastable, broadcast_xarrays,
-    are_arrays_broadcastable, broadcast_arrays
 )
 
 from ._reduc import (
@@ -47,8 +43,9 @@ from ._arg import (
     _nancoordmin as nancoordmin
 )
 
-from ._reduc_2to1 import diagonal
+from ._args import (argsmin, argsmax, nanargsmax, nanargsmin, coordsmin, coordsmax)
 
+from ._reduc_2to1 import diagonal
 
 from ._ufuncs import cos, cosh, exp, log, log2, log10, sigmoid, sin, sinh, tan, tanh 
 

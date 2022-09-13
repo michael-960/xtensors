@@ -1,6 +1,4 @@
 from __future__ import annotations
-from functools import wraps
-import numpy as np
 
 from typing import TYPE_CHECKING, List, Literal, Sequence, Tuple
 from ..typing import AxesPermutation, Dims, Coords

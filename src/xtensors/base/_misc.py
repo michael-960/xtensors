@@ -1,47 +1,25 @@
 from __future__ import annotations
 
-from typing import Any, cast, Union
+from typing import Any
 import numpy as np
+import numpy.typing as npt
 
-from xarray import DataArray
-from xtensors.typing import NDArray, number
 
-from ._broadcast import broadcast_arrays
+# from ._broadcast import broadcast_arrays
 
 
 from .. import tensor as xtt
 from scipy import special
 
 
-def where(condition: NDArray, x: NDArray|number, y: NDArray|number) -> DataArray:
+@xtt.generalize_3
+@xtt.promote_ternary_operator()
+def where(condition: npt.NDArray, x: npt.NDArray, y: npt.NDArray, /) -> npt.NDArray:
     '''
-        The returned tensor is named only if condition is named
     '''
-    dims = None
+    return np.where(condition, x, y)
 
-    X = cast(Union[NDArray,np.number], x)
-    Y = cast(Union[NDArray,np.number], y)
 
-    _c = condition.__array__()
-    _x = X
-    _y = Y
-
-    if hasattr(x, 'shape'):
-        _x = cast(NDArray, X.__array__())
-        _c, _x, _, _ = broadcast_arrays(_c, _x)
-
-    if hasattr(y, 'shape'):
-        _y = cast(NDArray, Y.__array__())
-        _c, _y, _, _ = broadcast_arrays(_c, _y)
-
-    _z = np.where(_c, _x, _y)
-
-    if isinstance(condition, DataArray): 
-        dims = list(condition.dims)
-        if len(_z.shape) > len(dims):
-            dims = ['dim_i' for i in range(len(_z.shape)-len(dims))] + dims
-
-    return DataArray(_z, dims=dims)
 
 
 @xtt.generalize_1

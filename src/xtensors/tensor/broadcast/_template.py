@@ -93,7 +93,9 @@ class Template:
 
     @classmethod
     def from_dims_channels(
-            cls, dims: Sequence[Union[str, int]], channels: Sequence[str|None]|None) -> Template:
+            cls,
+            dims: Sequence[Union[str, int]],
+            channels: Sequence[str|None]|None=None) -> Template:
         selectors = []
 
         if channels is None: channels = [None for _ in range(len(dims))]

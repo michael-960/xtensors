@@ -1,12 +1,6 @@
 from __future__ import annotations
-from typing import Any, Protocol, Sequence, Tuple, overload, cast
+from typing import Protocol, Tuple
 import numpy as np
-from xarray import DataArray
-
-from xtensors.typing import NDArray
-from xtensors.typing import AxisDimPair, DimLike, DimsLike
-
-from xtensors.unify import get_axes, strip_dims
 
 from .. import tensor as xtt
 
@@ -20,7 +14,7 @@ class _np_reduction_func(Protocol):
 
 
 class ReductionFunc(Protocol):
-    def __call__(self, x: xtt.Array,/, dim: xtt.DimLike|xtt.DimsLike|None) -> xtt.XTensor: ...
+    def __call__(self, x: xtt.TensorLike,/, dim: xtt.DimLike|xtt.DimsLike|None) -> xtt.XTensor: ...
 
 
 def _reduction_factory(_np_func: _np_reduction_func) -> ReductionFunc:

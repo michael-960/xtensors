@@ -4,18 +4,11 @@ from .. import tensor as xtt
 
 from typing import Optional, Protocol
 
-from xtensors.typing import NDArray
-from xarray import DataArray
-
-from ._broadcast import broadcast_arrays
-
-from ..unify import get_coord
-
 import warnings
 
 
 class BinaryOperation(Protocol):
-    def __call__(self, x: xtt.Array, y: xtt.Array, /) -> xtt.XTensor: ...
+    def __call__(self, x: xtt.TensorLike, y: xtt.TensorLike, /) -> xtt.XTensor: ...
 
 
 def _apply_operation(X: xtt.XTensor, Y: xtt.XTensor, binop: str, rbinop: Optional[str]=None) -> xtt.XTensor:

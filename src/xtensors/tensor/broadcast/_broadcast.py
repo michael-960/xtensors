@@ -110,11 +110,13 @@ def cast(broadcaster: Broadcaster, X: XTensor, Y: XTensor) -> XTensor: ...
 
 def cast(broadcaster: Broadcaster, X: XTensor, Y: XTensor|None=None):
     if Y is None:
-        def _cast(Y1: XTensor,/):
+        def _cast(Y1: XTensor, /):
             x, _y, dims, coords = broadcaster(X, Y1)
+
+            coords = [(coord if _y.shape[axis] > 1 else None) 
+                    for axis, coord in enumerate(coords)]
+
             return Y1.__class__(_y, dims, coords)
         return _cast
     return cast(broadcaster, X)(Y)
-
-
 
