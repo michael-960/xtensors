@@ -25,19 +25,19 @@ def promote_binary_operator(
         broadcaster: Broadcaster|None=None, 
         # dimcoord_converter: Callable[[Dims, Coords], Tuple[Dims, Coords]]|None=None,
     ) -> Callable[
-            [BinaryOperator[npt.NDArray, O]], BinaryOperator[XTensor, O]
+            [BinaryOperator[npt.NDArray]], BinaryOperator[XTensor]
         ]:
     '''
     Promote an NDArray binary operator to XTensor binary operator
     '''
     if broadcaster is None: broadcaster = vanilla_broadcaster
-    def wrapper(f: BinaryOperator[npt.NDArray, O]) -> BinaryOperator[XTensor, O]:
+    def wrapper(f: BinaryOperator[npt.NDArray]) -> BinaryOperator[XTensor]:
         @wraps(f)
-        def wrapped(X: XTensor, Y: XTensor, /, *args: O.args, **kwargs: O.kwargs) -> XTensor:
+        def wrapped(X: XTensor, Y: XTensor) -> XTensor:
             from ._base import XTensor
             
             _x, _y, dims, coords = broadcaster(X, Y)
-            res_data = f(_x, _y, *args, **kwargs)
+            res_data = f(_x, _y)
 
             # if dimcoord_converter:
             #     dims, coords = dimcoord_converter(dims, coords)
@@ -47,15 +47,15 @@ def promote_binary_operator(
 
 
 def promote_ternary_operator(
-    ) -> Callable[[TernaryOperator[npt.NDArray, O]], TernaryOperator[XTensor, O]]:
+    ) -> Callable[[TernaryOperator[npt.NDArray]], TernaryOperator[XTensor]]:
     '''
     Promote an NDArray ternary operator to XTensor ternary operator using
     vanilla broadcaster
     '''
     broadcaster = vanilla_broadcaster
-    def wrapper(f: TernaryOperator[npt.NDArray, O]) -> TernaryOperator[XTensor, O]:
+    def wrapper(f: TernaryOperator[npt.NDArray]) -> TernaryOperator[XTensor]:
         @wraps(f)
-        def wrapped(X: XTensor, Y: XTensor, Z: XTensor, /, *args: O.args, **kwargs: O.kwargs) -> XTensor:
+        def wrapped(X: XTensor, Y: XTensor, Z: XTensor) -> XTensor:
             from ._base import XTensor
 
             largest = X
@@ -67,7 +67,7 @@ def promote_ternary_operator(
             X1 = _cast(X)
             Y1 = _cast(Y)
             Z1 = _cast(Z)
-            res_data = f(X1.data, Y1.data, Z1.data, *args, **kwargs)
+            res_data = f(X1.data, Y1.data, Z1.data)
 
             dims = mergedims(mergedims(X, Y), Z)
             coords = mergecoords(mergecoords(X, Y), Z)

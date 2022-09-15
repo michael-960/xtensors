@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from xarray import DataArray
-from xtensors.typing import NDArray
 
 from .. import tensor as xtt
 

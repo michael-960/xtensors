@@ -13,8 +13,8 @@ from scipy import special
 @xtt.generalize_at_1
 @xtt.generalize_at_0
 @xtt.promote_ternary_operator()
-def where(condition: npt.NDArray, x: npt.NDArray, y: npt.NDArray, /) -> npt.NDArray:
-    return np.where(condition, x, y)
+def where(X: npt.NDArray, Y: npt.NDArray, Z: npt.NDArray) -> npt.NDArray:
+    return np.where(X, Y, Z)
 
 
 @xtt.generalize_at_0
