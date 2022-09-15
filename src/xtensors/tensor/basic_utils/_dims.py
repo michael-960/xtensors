@@ -5,7 +5,7 @@ from ... import numpy as xtnp
 
 from ._axes import permute
 
-from ._generalize import generalize_1
+from ._generalize import generalize_at_0
 
 
 if TYPE_CHECKING:
@@ -43,9 +43,7 @@ def mergedims(X: XTensor|Dims, Y: XTensor|Dims) -> Dims:
 
 
 def dimslast(X: XTensor, dims: Sequence[str]) -> XTensor:
-    '''
-
-    '''
+    '''Move named dimensions to the right.'''
     axes: List[int] = [X.get_axis(dim) for dim in dims]
     other_axes: List[int|None] = [axis for axis in range(X.rank) if axis not in axes]
 
@@ -53,17 +51,15 @@ def dimslast(X: XTensor, dims: Sequence[str]) -> XTensor:
 
 
 def dimsfirst(X: XTensor, dims: Sequence[str]) -> XTensor:
-    '''
-
-    '''
+    '''Move named dimensions to the left.'''
     axes: List[int] = [X.get_axis(dim) for dim in dims]
     other_axes: List[int|None] = [axis for axis in range(X.rank) if axis not in axes]
 
     return permute(X, axes+other_axes)
 
-
-def flatten(X: XTensor, 
-        dims: DimsLike, dim_out: str|None,
+@generalize_at_0
+def flatten(X: XTensor, /,
+        dims: DimsLike, dim_out: str|None, *,
         position: Literal['left', 'right']='right') -> XTensor:
 
     from .._base import XTensor
@@ -88,7 +84,7 @@ def flatten(X: XTensor,
         return Y
 
 
-@generalize_1
+@generalize_at_0
 def name_dim_if_absent(X: XTensor, /, axis: int, dim: str, *, force: bool=False) -> XTensor:
     '''
     Ensure that X has a named dimension called [dim]. If not already, the
@@ -105,5 +101,6 @@ def name_dim_if_absent(X: XTensor, /, axis: int, dim: str, *, force: bool=False)
     return X1
 
 
-
+@generalize_at_0
+def dims(X: XTensor): return X.dims
 

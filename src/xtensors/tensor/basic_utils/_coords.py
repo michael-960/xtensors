@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Any, List, Sequence
 import numpy as np
+from torch import wait
 
 from ..typing import Coords
 if TYPE_CHECKING: from .._base import XTensor
@@ -27,18 +28,34 @@ def mergecoords(X: XTensor|Coords, Y: XTensor|Coords, rtol: float=1e-8, atol: fl
 
     coords_y: Coords = [None for _ in range(rank_y, rank_x)] + coords_y
     
+    if not coords_same(coords_x, coords_y, rtol=rtol, atol=atol, none_compatible=True):
+        raise ValueError('Coordinates incompatible')
+
     for coord_x, coord_y in zip(coords_x, coords_y):
-        if coord_x is not None and coord_y is not None:
-
-            try: 
-                condition = np.allclose(coord_x, coord_y, rtol=rtol, atol=atol)
-            except TypeError:
-                condition = (coord_x == coord_y)
-
-            if not condition:
-                raise ValueError(f'Incompatible coordinates')
-
-        newcoords.append(list(coord_x) if coord_x is not None else list(coord_y) if coord_y is not None else None)
+        newcoords.append(coord_x if coord_x is not None else coord_y if coord_y is not None else None)
 
     return newcoords
 
+
+def coords_same(coords1: Coords, coords2: Coords, /, *,
+        rtol: float=1e-8, atol: float=1e-8, none_compatible: bool=False) -> bool:
+    '''
+    Return whether the given coordinates are the same.
+    Two coordinate sequences are considered the same if:
+        - 
+    '''
+    
+    if len(coords1) != len(coords2): return False
+
+    for coord1, coord2 in zip(coords1, coords2):
+        if coord1 is None or coord2 is None: 
+            condition = (coord1 is None and coord2 is None) or none_compatible
+        else:
+            try: 
+                condition = np.allclose(coord1, coord2, rtol=rtol, atol=atol)
+            except TypeError:
+                condition = (coord1 == coord2)
+
+        if not condition: return False
+
+    return True

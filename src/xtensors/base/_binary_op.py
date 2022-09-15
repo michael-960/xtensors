@@ -29,10 +29,11 @@ def _apply_operation(X: xtt.XTensor, Y: xtt.XTensor, binop: str, rbinop: Optiona
 
 
 def _binop_factory(_bin_op: str, _rbin_op: str) -> BinaryOperation:
-
-    @xtt.generalize_2
+    @xtt.generalize_at_1
+    @xtt.generalize_at_0
     def _op(X: xtt.XTensor, Y: xtt.XTensor, /) -> xtt.XTensor:
         return _apply_operation(X, Y, _bin_op, _rbin_op)
+
     return _op
 
 

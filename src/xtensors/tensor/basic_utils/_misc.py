@@ -21,3 +21,7 @@ def strip(l: Sequence[T], indices: Sequence[int], only_remaining: bool=True) -> 
 
     if only_remaining: return remaining
     return remaining, stripped
+
+
+
+

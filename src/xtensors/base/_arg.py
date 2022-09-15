@@ -26,7 +26,7 @@ class CoordFunction(Protocol):
 
 
 def _reduction_factory(_np_func: _np_arg_func) -> ArgFunction:
-    @xtt.generalize_1
+    @xtt.generalize_at_0
     def _reduce(X: xtt.XTensor, /, dim: xtt.DimLike) -> xtt.XTensor:
         axis = X.get_axis(dim)
         return xtt.XTensor(
@@ -43,7 +43,7 @@ _nanargmin = _reduction_factory(np.nanargmin)
 
 
 def _coord_reduc_factory(_func: ArgFunction) -> CoordFunction:
-    @xtt.generalize_1
+    @xtt.generalize_at_0
     def _reduce(X: xtt.XTensor, /, dim: xtt.DimLike, *, use_index_if_no_coord: bool=False) -> xtt.XTensor:
         '''
             Return the coordinate on [dim] that maximizes/minimizes x If dimension [dim] does

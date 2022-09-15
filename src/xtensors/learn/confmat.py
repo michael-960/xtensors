@@ -1,39 +1,37 @@
-from collections.abc import Callable
-from typing_extensions import ParamSpec
 import numpy as np
-
-import numpy.typing as npt
-
 from .. import numpy as xtnp
 from .. import tensor as xtt
 
 
-def _confmat(X: np.ndarray, Y: np.ndarray, /, *, n_classes: int) -> np.ndarray:
-     _z = X * n_classes + Y
-     cmat = xtnp.bincount(_z, N=n_classes**2)
-     return cmat.reshape(*cmat.shape[:-1], n_classes, n_classes)
+def confusion_matrix(truth: np.ndarray, pred: np.ndarray, /, *, n_classes: int) -> np.ndarray:
+    '''
+        X: (*, M)
+        Y: (*, M)
+    '''
+    z = truth* n_classes + pred
+    cmat = xtnp.bincount(z, N=n_classes**2)
+    return cmat.reshape(*cmat.shape[:-1], n_classes, n_classes)
 
 
-def confusion_matrix(
-        target_dim: str,
-        class_truth_dim: str, class_pred_dim: str, n_classes: int
-    ): 
-
-    def convert(dims: xtt.Dims, coords: xtt.Coords):
-        return dims[:-1] + [class_truth_dim, class_pred_dim], coords[:-1] + [None, None]
-
-    @xtt.promote_binary_operator(dimcoord_converter=convert)
-    def __confmat(X: npt.NDArray, Y: npt.NDArray):
-        return _confmat(X, Y, n_classes=n_classes)
-
-    @xtt.generalize_2
-    def confmat(X: xtt.XTensor, Y: xtt.XTensor) -> xtt.XTensor:
-        X1 = xtt.dimslast(X, [target_dim])
-        Y1 = xtt.dimslast(Y, [target_dim])
-        _cm = __confmat(X1, Y1)
+def get_confmat_function(target_dim: str, truth_dim: str, pred_dim: str, n_classes: int):
+    @xtt.generalize_at_0
+    @xtt.generalize_at_1
+    def wrapped_confmat(truth: xtt.XTensor, pred: xtt.XTensor) -> xtt.XTensor:
         
-        _cm.set_dim(-2, class_truth_dim)
-        _cm.set_dim(-1, class_pred_dim)
-        return _cm
+        X = xtt.name_dim_if_absent(truth, -1, target_dim)
+        Y = xtt.name_dim_if_absent(pred, -1, target_dim)
 
-    return confmat
+        X = xtt.dimslast(truth, [target_dim])
+        Y = xtt.dimslast(pred, [target_dim])
+
+        x, y, dims, coords = xtt.vanilla_broadcaster(X, Y)
+        cm = confusion_matrix(x, y, n_classes=n_classes)
+
+        C = xtt.XTensor(cm,
+                dims=dims[:-1] + [truth_dim, pred_dim],
+                coords=coords[:-1] + [None, None]
+            )
+        return C
+
+    return wrapped_confmat
+

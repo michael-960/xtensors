@@ -5,7 +5,7 @@ import numpy as np
 from .. import tensor as xtt
 
 
-@xtt.generalize_1
+@xtt.generalize_at_0
 def diagonal(X: xtt.XTensor, /, dim1: xtt.DimLike, dim2: xtt.DimLike, dim_out: str|None) -> xtt.XTensor:
     '''
         Reduce a tensor x by taking the diagonal elements along [dim1] and
@@ -21,3 +21,4 @@ def diagonal(X: xtt.XTensor, /, dim1: xtt.DimLike, dim2: xtt.DimLike, dim_out: s
             dims=xtt.strip(X.dims, [axis1, axis2]) + [dim_out],
             coords=xtt.strip(X.coords, [axis1, axis2]) + [None],
             )
+

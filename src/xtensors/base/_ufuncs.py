@@ -15,7 +15,7 @@ class UFunc(Protocol):
 
 
 def _ufunc_factory(_np_func: _ufunc) -> UFunc:
-    @xtt.generalize_1
+    @xtt.generalize_at_0
     def _f(X: xtt.XTensor, /) -> xtt.XTensor:
         return xtt.XTensor(_np_func(X.data), X.dims, X.coords)
     return _f

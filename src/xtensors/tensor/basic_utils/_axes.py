@@ -1,7 +1,13 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, List, Literal, Sequence, Tuple
+import numpy as np
 from ..typing import AxesPermutation, Dims, Coords
+
+from ._generalize import generalize_at_0, generalize_at_1
+
+from ._coords import coords_same
+
 
 if TYPE_CHECKING: from .._base import XTensor
 
@@ -16,6 +22,7 @@ def permutation_well_defined(axes: AxesPermutation, rank: int|None=None) -> bool
     return condition
 
 
+@generalize_at_0
 def permute(X: XTensor, axes: AxesPermutation) -> XTensor:
     '''
     
@@ -48,7 +55,8 @@ def permute(X: XTensor, axes: AxesPermutation) -> XTensor:
     return Y
 
 
-def newdims(X: XTensor,
+@generalize_at_0
+def newdims(X: XTensor, *,
         dims: Dims|None=None, coords: Coords|None=None,
         position: Literal['left','right']='left') -> XTensor:
     '''
@@ -89,21 +97,54 @@ def newdims(X: XTensor,
         return XTensor(_y, dims=list(X.dims)+newdims, coords=list(X.coords)+newcoords)
 
 
+@generalize_at_0
+@generalize_at_1
 def align(X: XTensor, Y: XTensor) -> Tuple[XTensor, XTensor]:
     '''
     Pad singleton unnamed dimensions to (at most) one of the two tensors so that the
     returned tensors have the same number of dimnesions.
     '''
     if len(X.shape) > len(Y.shape):
-        return X, newdims(Y, [None for _ in range(len(Y.shape), len(X.shape))])
+        return X, newdims(Y, dims=[None for _ in range(len(Y.shape), len(X.shape))])
     
     if len(X.shape) < len(Y.shape):
-        return newdims(X, [None for _ in range(len(X.shape), len(Y.shape))]), Y
+        return newdims(X, dims=[None for _ in range(len(X.shape), len(Y.shape))]), Y
 
     return X, Y
+
+
+def stack(x: Sequence[XTensor],
+        newdim: str|None=None, 
+        position: Literal['left', 'right']='left') -> XTensor:
+    from .._base import XTensor
+
+    for X in x:
+        if not X.shape == x[0].shape:
+            raise ValueError('All tensors should have the same shape for stacking')
+
+        if not X.dims == x[0].dims:
+            raise ValueError('All tensors should have the same dimension names for stacking')
+    
+        if not coords_same(list(X.coords), list(x[0].coords)):
+            raise ValueError('All tensors should have the same coordinatees for stacking')
+
+    axis = 0 if position == 'left' else -1
+    data = np.stack([X.data for X in x], axis=axis)
+
+    return XTensor(data, dims=[newdim]+list(x[0].dims), coords=[None]+list(x[0].coords))
 
 
 def shapes_broadcastable(a: Sequence[int], b: Sequence[int]) -> bool:
     for sa, sb in zip(a[::-1], b[::-1]):
         if sa != sb and sa != 1 and sb != 1: return False
     return True
+
+
+
+@generalize_at_0
+def shape(X: XTensor): return X.shape
+
+
+@generalize_at_0
+def rank(X: XTensor): return X.rank
+

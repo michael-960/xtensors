@@ -9,15 +9,15 @@ from scipy import special
 
 
 
-@xtt.generalize_3
+@xtt.generalize_at_2
+@xtt.generalize_at_1
+@xtt.generalize_at_0
 @xtt.promote_ternary_operator()
 def where(condition: npt.NDArray, x: npt.NDArray, y: npt.NDArray, /) -> npt.NDArray:
-    '''
-    '''
     return np.where(condition, x, y)
 
 
-@xtt.generalize_1
+@xtt.generalize_at_0
 def softmax(X: xtt.XTensor, /, dim: xtt.DimLike) -> xtt.XTensor:
     axis = X.get_axis(dim)
     _y = special.softmax(X.data, axis=axis)

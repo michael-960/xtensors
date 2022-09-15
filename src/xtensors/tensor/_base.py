@@ -1,21 +1,24 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Dict, Generic, List, Optional, Sequence, Tuple, TypeVar
+from typing import Any, Callable, Dict, Generic, List, Optional, Sequence, Tuple, TypeVar, overload
 from numpy.typing import ArrayLike, NDArray
 import numpy as np
 
 from .broadcast import vanilla_broadcaster, Broadcaster
-from .typing import BinaryOperator, DimLike, DimsLike
+from .typing import BinaryOperator, DimLike, DimsLike, TensorLike, Array
 
 from ._decors import promote_binary_operator
 
 from .basic_utils._base import to_xtensor
+from .basic_utils._misc import strip
+
 
 
 def inject_broadcast(broadcaster: Broadcaster):
     promote = promote_binary_operator(broadcaster)
-    def wrapper(f: Callable[[XTensor], BinaryOperator[np.ndarray]]):
-        def wrapped(self: XTensor, other: Any, /):
+    def wrapper(f: Callable[[XTensor], BinaryOperator[np.ndarray]]
+        ):
+        def wrapped(self: XTensor, other: TensorLike, /) -> XTensor:
             binop = promote(f(self))
             if isinstance(other, XTensor):
                 return binop(self, other)
@@ -28,13 +31,14 @@ def inject_broadcast(broadcaster: Broadcaster):
 
 
 class XTensor:
-    def __init__(self, data: NDArray,
+    def __init__(self, data: Array,
         dims: Optional[Sequence[str|None]]=None,
         coords: Optional[Sequence[Sequence[Any]|NDArray[Any]|None]]=None,
             ) -> None:
 
 
-        self.data = data
+        self.data = data.__array__()
+
 
         self._dim_axis_dict: Dict[str,int] = dict()
 
@@ -46,6 +50,9 @@ class XTensor:
 
     def viewcopy(self) -> XTensor:
         return XTensor(self.data, self.dims, self.coords)
+    
+    def item(self) -> float:
+        return self.data.item()
 
     @property
     def dims(self) -> Tuple[str|None,...]:
@@ -98,6 +105,7 @@ class XTensor:
             self._dims = [None for _ in self.data.shape]
         else:
             assert len(dims) == len(self.data.shape)
+            assert '' not in dims
             _dims_without_none = [dim for dim in dims if dim is not None]
             assert len(_dims_without_none) == len(set(_dims_without_none))
             self._dims = list(dims)
@@ -106,10 +114,10 @@ class XTensor:
                 if dim is not None:
                     self._dim_axis_dict[dim] = axis
 
-    def set_dim(self, axis: int, dim: str|None) -> None:
-        axis = self.get_axis(axis)
+    def set_dim(self, dim: DimLike, newdim: str|None) -> None:
+        axis = self.get_axis(dim)
         new_dims = self._dims.copy()
-        new_dims[axis] = dim
+        new_dims[axis] = newdim
         self.set_dims(new_dims)
 
     def set_coords(self, coords: Sequence[Sequence[Any]|NDArray[Any]|None]|None) -> None:
@@ -126,11 +134,41 @@ class XTensor:
                     coords_clean.append(None)
             self._coords = coords_clean
 
-    def set_coord(self, axis: int, coord: Sequence[Any]|NDArray[Any]|None) -> None:
-        axis = self.get_axis(axis)
+    def set_coord(self, dim: DimLike, coord: Sequence[Any]|NDArray[Any]|None) -> None:
+        axis = self.get_axis(dim)
         new_coords = self._coords.copy()
         new_coords[axis] = np.array(coord)
         self.set_coords(new_coords)
+
+
+    def slc(self, dim: DimLike, slc: slice) -> XTensor:
+        axis = self.get_axis(dim)
+
+        slices: List[slice] = [slice(None, None, None)]*self.rank
+        slices[axis] = slc
+
+        data = self.data[tuple(slices)]
+        coords = list(self.coords)
+        
+        coord = coords[axis]
+        if coord is not None:
+            coords[axis] = coord[slc]
+
+        return XTensor(data, dims=self.dims, coords=coords)
+
+
+    def get(self, dim: DimLike, index: int) -> XTensor:
+        axis = self.get_axis(dim)
+        
+        slices: List[slice|int] = [slice(None, None, None)]*self.rank
+        slices[axis] = index
+
+        data = self.data[tuple(slices)]
+
+        dims = strip(self.dims, [axis])
+        coords = strip(self.coords, [axis])
+        
+        return XTensor(data, dims=dims, coords=coords)
 
     def __repr__(self):
         _repr = 'Tensor\n'
@@ -175,6 +213,12 @@ class XTensor:
 
     @inject_broadcast(vanilla_broadcaster)
     def __rtruediv__(self): return lambda X, Y: Y/X
+
+    @inject_broadcast(vanilla_broadcaster)
+    def __pow__(self): return lambda X, Y: X**Y
+
+    @inject_broadcast(vanilla_broadcaster)
+    def __rpow__(self): return lambda X, Y: Y**X
 
     @inject_broadcast(vanilla_broadcaster)
     def __eq__(self): return lambda X, Y: X==Y
