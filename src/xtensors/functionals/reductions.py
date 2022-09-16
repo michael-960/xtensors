@@ -10,13 +10,24 @@ class Reduction(Functional):
     '''
     Single-axis reduction fucntional
     '''
-    def __init__(self, dim: xtt.DimLike) -> None:
+    def __init__(self, dim: xtt.DimLike, /, *args) -> None:
         self.dim = dim
         self._reduce: base._reduc.ReductionFunc | base._arg.ArgFunction
         self.name = 'UNIMPLEMENTED_REDUCTION'
 
     def __call__(self, x: xtt.TensorLike) -> xtt.XTensor:
         return self._reduce(x, self.dim)
+
+
+class Index(Reduction):
+    def __init__(self, dim: xtt.DimLike, index: int):
+        self.dim = dim
+        self.index = index
+        self.name = f'Index({dim},{index})'
+
+    @xtt.generalize_at_1
+    def __call__(self, X: xtt.XTensor) -> xtt.XTensor:
+        return xtt.index(X, (self.dim, self.index))
 
 
 class Mean(Reduction):
