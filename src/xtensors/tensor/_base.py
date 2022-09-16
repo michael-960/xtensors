@@ -120,6 +120,10 @@ class XTensor:
         new_dims[axis] = newdim
         self.set_dims(new_dims)
 
+    def get_coord(self, dim: DimLike) -> NDArray|None:
+        axis = self.get_axis(dim)
+        return self._coords[axis]
+
     def set_coords(self, coords: Sequence[Sequence[Any]|NDArray[Any]|None]|None) -> None:
         if coords is None:
             self._coords = [None for _ in self.data.shape]

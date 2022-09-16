@@ -19,7 +19,7 @@ class Array(Protocol):
     def __array__(self) -> np.ndarray: ...
 
 
-TensorLike = Union[Array, List, float]
+TensorLike = Union[Array, Sequence, float]
 
 AxesPermutation = List[Union[int, None]]
 '''

@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: xtensors
-Version: 0.1.0
+Version: 0.1.1
 Summary: ND named tensor utilities
 Home-page: https://github.com/michael-960/xtensor
 Author: Michael Wang
@@ -16,6 +16,6 @@ License-File: LICENSE
 
 xtensors
 ############
-`xtensors` is an ND tensor manipulation utility package based on xarray.
+`xtensors` is a named tensor utility library.
 
 

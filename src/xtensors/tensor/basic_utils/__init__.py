@@ -1,8 +1,12 @@
 from ._base import to_xtensor
 
-from ._axes import permute, newdims, align, shapes_broadcastable, permutation_well_defined, shape, stack, rank
+from ._axes import (
+        permute, newdims, align, shapes_broadcastable,
+        permutation_well_defined, shape, stack, rank, index)
 
-from ._dims import mergedims, flatten, dimsfirst, dimslast, name_dim_if_absent, dims
+from ._dims import (
+        mergedims, flatten, dimsfirst, dimslast,
+        name_dim_if_absent, dims)
 
 from ._coords import mergecoords, coords_same
 

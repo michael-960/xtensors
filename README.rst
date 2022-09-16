@@ -1,6 +1,6 @@
 
 xtensors
 ############
-`xtensors` is an ND tensor manipulation utility package based on xarray.
+`xtensors` is a named tensor utility library.
 
 

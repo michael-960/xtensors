@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, List, Literal, Sequence, Tuple
 import numpy as np
-from ..typing import AxesPermutation, Dims, Coords
+from ..typing import AxesPermutation, Dims, Coords, DimLike
 
 from ._generalize import generalize_at_0, generalize_at_1
 
@@ -147,4 +147,22 @@ def shape(X: XTensor): return X.shape
 
 @generalize_at_0
 def rank(X: XTensor): return X.rank
+
+
+def index(X: XTensor, *indices: Tuple[DimLike, int], ignore_if_absent: bool=False) -> XTensor:
+    Y = X.viewcopy()
+
+    for ind in indices:
+        if isinstance(ind[0], str)\
+        and ind[0] not in Y.dims\
+        and ignore_if_absent: continue
+
+        Y = Y.get(ind[0], ind[1])
+
+    return Y
+
+
+
+
+
 
