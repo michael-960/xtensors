@@ -1,10 +1,12 @@
 from __future__ import annotations
 from numbers import Real
-from typing import Any, Callable, Generic, List, Protocol, Sequence, Tuple, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Callable, Generic, List, Protocol, Sequence, Tuple, TypeVar, Union
 from typing_extensions import ParamSpec, TypeVarTuple
+
 
 import numpy as np
 import numpy.typing as npt
+
 
 T_con = TypeVar('T_con', contravariant=True)
 U_con = TypeVar('U_con', contravariant=True)
@@ -27,11 +29,16 @@ A list of integers or None that represents a permutation of a set of axes. None
 means that a new axis of length 1 is to be created at the corresponding index.
 '''
 
-DimLike = Union[str,int,Tuple[str,int]]
+class HasDimName(Protocol):
+    def __get_dimname__(self) -> str: ...
+
+DimLike = Union[str,int,Tuple[str,int],HasDimName]
 DimsLike = List[DimLike]
 
 Dims = List[Union[str,None]]
 Coords = List[Union[npt.NDArray[Any],None]]
+
+
 
 
 class Function_1Arg(Protocol[T_con, O, T_co]):

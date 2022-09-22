@@ -12,6 +12,8 @@ from ._decors import promote_binary_operator
 from .basic_utils._base import to_xtensor
 from .basic_utils._misc import strip
 
+from ._slice import TensorIndexer
+
 
 
 def inject_broadcast(broadcaster: Broadcaster):
@@ -71,6 +73,10 @@ class XTensor:
         return len(self.data.shape)
 
     def get_axis(self, dim: DimLike) -> int:
+        try:
+            dim = dim.__get_dimname__() # type: ignore
+        except AttributeError: pass
+
         if isinstance(dim, str): return self._dim_axis_dict[dim]
         if isinstance(dim, int):
             if dim < 0: dim = dim + self.rank
@@ -94,8 +100,14 @@ class XTensor:
     def get_axes(self, dims: DimLike|DimsLike|None) -> List[int]:
         if dims is None:
             return [i for i in range(self.rank)]
+        try:
+            dims = dims.__get_dimname__() # type: ignore
+        except AttributeError: pass
 
         if isinstance(dims, (int, str, tuple)): return [self.get_axis(dims)]
+
+        assert isinstance(dims, list)
+
         axes = [self.get_axis(dim) for dim in dims]
         assert len(axes) == len(set(axes))
         return axes
@@ -141,7 +153,10 @@ class XTensor:
     def set_coord(self, dim: DimLike, coord: Sequence[Any]|NDArray[Any]|None) -> None:
         axis = self.get_axis(dim)
         new_coords = self._coords.copy()
-        new_coords[axis] = np.array(coord)
+        if coord is None:
+            new_coords[axis] = None
+        else:
+            new_coords[axis] = np.array(coord)
         self.set_coords(new_coords)
 
 
@@ -173,6 +188,15 @@ class XTensor:
         coords = strip(self.coords, [axis])
         
         return XTensor(data, dims=dims, coords=coords)
+
+    def __getitem__(self, slices: TensorIndexer|Tuple[TensorIndexer,...]) -> XTensor:
+
+        if isinstance(slices, tuple):
+            _Y = slices[0].index(self)
+            if len(slices) == 1: 
+                return _Y
+            return _Y.__getitem__(tuple(slices[1:]))
+        return slices.index(self)
 
     def __repr__(self):
         _repr = 'Tensor\n'
