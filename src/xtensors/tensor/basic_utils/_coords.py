@@ -1,7 +1,6 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Any, List, Sequence
+from typing import TYPE_CHECKING
 import numpy as np
-from torch import wait
 
 if TYPE_CHECKING:
     from .._base import XTensor

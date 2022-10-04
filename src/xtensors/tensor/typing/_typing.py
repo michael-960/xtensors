@@ -1,7 +1,8 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Any, List, Protocol, Sequence, Tuple, TypeVar, Union
 
+from typing import TYPE_CHECKING
 if TYPE_CHECKING:
+    from typing import List, Protocol, Sequence, Tuple, TypeVar, Union, Any
     from typing_extensions import ParamSpec
 
     import numpy as np

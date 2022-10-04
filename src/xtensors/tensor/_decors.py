@@ -7,11 +7,10 @@ from .basic_utils import mergedims, mergecoords
 
 
 from typing import TYPE_CHECKING 
-
 if TYPE_CHECKING:
     from typing import Callable, TypeVar
-    from typing_extensions import ParamSpec, Concatenate
-    from .typing import BinaryOperator, Dims, Coords, TernaryOperator
+    from typing_extensions import ParamSpec
+    from .typing import BinaryOperator, TernaryOperator
     from .broadcast._types import Broadcaster
     from ._base import XTensor
     O = ParamSpec('O')

@@ -1,11 +1,10 @@
 from __future__ import annotations
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Any, Union
-import numpy as np
 
+from typing import TYPE_CHECKING
 if TYPE_CHECKING:
+    from typing import Union
     from ._base import XTensor
-    from .typing import HasDimName
 
 
 

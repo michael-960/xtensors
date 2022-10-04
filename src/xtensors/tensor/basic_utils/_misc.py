@@ -1,6 +1,7 @@
 from __future__ import annotations
-from typing import List, Literal, Sequence, Tuple, TypeVar, overload
 
+
+from typing import List, Literal, Sequence, Tuple, TypeVar, overload
 
 
 T = TypeVar('T')
