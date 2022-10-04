@@ -36,7 +36,7 @@ src/xtensors/numpy/_np.py
 src/xtensors/tensor/__init__.py
 src/xtensors/tensor/_base.py
 src/xtensors/tensor/_decors.py
-src/xtensors/tensor/_storage.py
+src/xtensors/tensor/_slice.py
 src/xtensors/tensor/basic_utils/__init__.py
 src/xtensors/tensor/basic_utils/_axes.py
 src/xtensors/tensor/basic_utils/_base.py
