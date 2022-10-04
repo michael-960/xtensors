@@ -8,22 +8,22 @@ Generalization:
 '''
 from functools import wraps
 from typing import TYPE_CHECKING, Any, Callable, TypeVar
-from typing_extensions import ParamSpec, Concatenate
-import typing
 
 from ._base import to_xtensor
 
 
 if TYPE_CHECKING:
+
+    from typing_extensions import ParamSpec, Concatenate
     from .._base import XTensor
     from ..typing import TensorLike
 
-O = ParamSpec('O')
+    O = ParamSpec('O')
 
-T = TypeVar('T')
-U = TypeVar('U')
-V = TypeVar('V')
-R = TypeVar('R')
+    T = TypeVar('T')
+    U = TypeVar('U')
+    V = TypeVar('V')
+    R = TypeVar('R')
 
 
 def generalize_at_0(

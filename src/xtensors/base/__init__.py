@@ -1,6 +1,4 @@
 
-
-
 from ._misc import where, softmax, get_rank
 
 from ._binary_op import (
@@ -13,6 +11,9 @@ from ._binary_op import (
     _less as less,
     _less_equal as less_equal,
     _equal as equal,
+
+    _or as logical_or,
+    _and as logical_and,
 )
 
 from ._reduc import (
@@ -48,7 +49,6 @@ from ._args import (argsmin, argsmax, nanargsmax, nanargsmin, coordsmin, coordsm
 from ._reduc_2to1 import diagonal
 
 from ._ufuncs import cos, cosh, exp, log, log2, log10, sigmoid, sin, sinh, tan, tanh 
-
 
 
 

@@ -2,14 +2,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, List, Literal, Sequence, Tuple
 import numpy as np
-from ..typing import AxesPermutation, Dims, Coords, DimLike
 
 from ._generalize import generalize_at_0, generalize_at_1
 
 from ._coords import coords_same
 
-
-if TYPE_CHECKING: from .._base import XTensor
+if TYPE_CHECKING:
+    from .._base import XTensor
+    from ..typing import AxesPermutation, Dims, Coords, DimLike
 
 
 def permutation_well_defined(axes: AxesPermutation, rank: int|None=None) -> bool:

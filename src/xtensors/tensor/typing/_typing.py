@@ -1,72 +1,64 @@
 from __future__ import annotations
-from numbers import Real
-from typing import TYPE_CHECKING, Any, Callable, Generic, List, Protocol, Sequence, Tuple, TypeVar, Union
-from typing_extensions import ParamSpec, TypeVarTuple
+from typing import TYPE_CHECKING, Any, List, Protocol, Sequence, Tuple, TypeVar, Union
+
+if TYPE_CHECKING:
+    from typing_extensions import ParamSpec
+
+    import numpy as np
+    import numpy.typing as npt
 
 
-import numpy as np
-import numpy.typing as npt
+    T_con = TypeVar('T_con', contravariant=True)
+    U_con = TypeVar('U_con', contravariant=True)
+    V_con = TypeVar('V_con', contravariant=True)
+    T_co = TypeVar('T_co', covariant=True)
+
+    S = TypeVar('S')
+    T = TypeVar('T')
+    O = ParamSpec('O')
+
+    class Array(Protocol):
+        def __array__(self) -> np.ndarray: ...
 
 
-T_con = TypeVar('T_con', contravariant=True)
-U_con = TypeVar('U_con', contravariant=True)
-V_con = TypeVar('V_con', contravariant=True)
-T_co = TypeVar('T_co', covariant=True)
+    TensorLike = Union[Array, Sequence, float]
 
-S = TypeVar('S')
-T = TypeVar('T')
-O = ParamSpec('O')
+    AxesPermutation = List[Union[int, None]]
+    '''
+    A list of integers or None that represents a permutation of a set of axes. None
+    means that a new axis of length 1 is to be created at the corresponding index.
+    '''
 
-class Array(Protocol):
-    def __array__(self) -> np.ndarray: ...
+    class HasDimName(Protocol):
+        def __get_dimname__(self) -> str: ...
 
+    DimLike = Union[str,int,Tuple[str,int],HasDimName]
+    DimsLike = List[DimLike]
 
-TensorLike = Union[Array, Sequence, float]
-
-AxesPermutation = List[Union[int, None]]
-'''
-A list of integers or None that represents a permutation of a set of axes. None
-means that a new axis of length 1 is to be created at the corresponding index.
-'''
-
-class HasDimName(Protocol):
-    def __get_dimname__(self) -> str: ...
-
-DimLike = Union[str,int,Tuple[str,int],HasDimName]
-DimsLike = List[DimLike]
-
-Dims = List[Union[str,None]]
-Coords = List[Union[npt.NDArray[Any],None]]
-
-
-
-
-class Function_1Arg(Protocol[T_con, O, T_co]):
-    def __call__(self, X: T_con, /, *args: O.args, **kwargs: O.kwargs) -> T_co: ...
-
-
-class Function_2Args(Protocol[T_con, U_con, O, T_co]):
-    def __call__(self, X: T_con, Y: U_con, /, *args: O.args, **kwargs: O.kwargs) -> T_co: ...
-
-
-class Function_3Args(Protocol[T_con, U_con, V_con, O, T_co]):
-    def __call__(self, X: T_con, Y: U_con, Z: V_con, /, *args: O.args, **kwargs: O.kwargs) -> T_co: ...
-
-
-class BinaryOperator(Protocol[T]):
-    def __call__(self, X: T, Y: T) -> T: ...
-
-
-class TernaryOperator(Protocol[T]):
-    def __call__(self, X: T, Y: T, Z: T) -> T: ...
+    Dims = List[Union[str,None]]
+    Coords = List[Union[npt.NDArray[Any],None]]
 
 
 
 
+    class Function_1Arg(Protocol[T_con, O, T_co]):
+        def __call__(self, X: T_con, /, *args: O.args, **kwargs: O.kwargs) -> T_co: ...
 
 
+    class Function_2Args(Protocol[T_con, U_con, O, T_co]):
+        def __call__(self, X: T_con, Y: U_con, /, *args: O.args, **kwargs: O.kwargs) -> T_co: ...
 
 
+    class Function_3Args(Protocol[T_con, U_con, V_con, O, T_co]):
+        def __call__(self, X: T_con, Y: U_con, Z: V_con, /, *args: O.args, **kwargs: O.kwargs) -> T_co: ...
+
+
+    class BinaryOperator(Protocol[T]):
+        def __call__(self, X: T, Y: T) -> T: ...
+
+
+    class TernaryOperator(Protocol[T]):
+        def __call__(self, X: T, Y: T, Z: T) -> T: ...
 
 
 

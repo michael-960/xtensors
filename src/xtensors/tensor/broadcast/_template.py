@@ -8,18 +8,16 @@ Template Broadcaster:
 
 '''
 
-from typing import TYPE_CHECKING, List, Literal, Optional, Sequence, Union
 import numpy as np
-from ._types import Broadcaster
-
-if TYPE_CHECKING:
-    from .._base import XTensor
-
-from ..typing import Dims, Coords
 from ..basic_utils import permute, permutation_well_defined, mergecoords, mergedims
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from typing import List, Literal, Optional, Sequence, Union
+    from .._base import XTensor
+    from ..typing import Dims, Coords
 
-Channel = Union[str, None]
+    Channel = Union[str, None]
 
 
 class AxisSelector:

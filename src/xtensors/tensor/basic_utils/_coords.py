@@ -3,8 +3,9 @@ from typing import TYPE_CHECKING, Any, List, Sequence
 import numpy as np
 from torch import wait
 
-from ..typing import Coords
-if TYPE_CHECKING: from .._base import XTensor
+if TYPE_CHECKING:
+    from .._base import XTensor
+    from ..typing import Coords
 
 
 def mergecoords(X: XTensor|Coords, Y: XTensor|Coords, rtol: float=1e-8, atol: float=1e-8) -> Coords:

@@ -110,9 +110,10 @@ Another example:
 '''
 
 from ._broadcast import broadcast, vanilla_broadcaster, template_broadcaster, unilateral_broadcaster, cast
-
 from ._dimcast import castdim, unilateral_dimcast
-
 from ._template import Template, AxisSelector, IndexSelector, DimNameSelector
-from ._types import Broadcaster, Dimcaster
+
+from typing import TYPE_CHECKING as __TYPE_CHECKING
+if __TYPE_CHECKING:
+    from ._types import Broadcaster, Dimcaster
 

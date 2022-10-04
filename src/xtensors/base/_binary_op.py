@@ -3,6 +3,8 @@ from __future__ import annotations
 from .. import tensor as xtt
 
 from typing import Optional, Protocol
+import numpy as np
+import numpy.typing as npt
 
 import warnings
 
@@ -48,5 +50,22 @@ _less = _binop_factory('__lt__', '__gt__')
 _less_equal = _binop_factory('__le__', '__ge__')
 
 _equal = _binop_factory('__eq__', '__eq__')
+
+def _np_or(X: npt.NDArray, Y: npt.NDArray) -> npt.NDArray:
+    return np.logical_or(X, Y)
+
+def _np_and(X: npt.NDArray, Y: npt.NDArray) -> npt.NDArray:
+    return np.logical_and(X, Y)
+
+_or = xtt.promote_binary_operator(xtt.vanilla_broadcaster)(
+        _np_or
+    )
+_and = xtt.promote_binary_operator(xtt.vanilla_broadcaster)(
+        _np_and
+    )
+
+
+
+
 
 

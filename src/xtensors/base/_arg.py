@@ -1,10 +1,9 @@
-
+from __future__ import annotations
 from typing import Protocol
 
 
 import numpy as np
 import numpy.typing as npt
-
 from .. import tensor as xtt
 
 '''

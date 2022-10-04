@@ -1,14 +1,11 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, List, Tuple
 
-
-
-from ..typing import AxesPermutation
-
+from typing import TYPE_CHECKING
 if TYPE_CHECKING:
+    from typing import Tuple, List
     from .._base import XTensor
-
-from ._types import Dimcaster
+    from ..typing import AxesPermutation
+    from ._types import Dimcaster
 
 
 def unilateral_dimcast(strict: bool=False) -> Dimcaster:

@@ -1,4 +1,11 @@
 from __future__ import annotations
+'''
+Args functions:
+    For reduction functions whose return values are
+    **indices** or **coordinates** over multiple axes
+    E.g. argsmax
+'''
+
 from typing import Protocol
 
 import numpy as np
@@ -6,13 +13,6 @@ import numpy.typing as npt
 
 from .. import numpy as xtnp
 from .. import tensor as xtt
-
-'''
-Args functions:
-    For reduction functions whose return values are
-    **indices** or **coordinates** over multiple axes
-    E.g. argsmax
-'''
 
 
 ARGS_DIM = 'ARGS_DIM'

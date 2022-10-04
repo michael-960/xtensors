@@ -1,12 +1,10 @@
 from __future__ import annotations
 import numpy as np
 
-from typing import TYPE_CHECKING, Callable, Literal, Sequence, Tuple, overload
 
-from ..typing import Dims, Coords
+from typing import TYPE_CHECKING, overload
+
 from ..basic_utils import permute, align, shapes_broadcastable, mergecoords, mergedims
-
-from ._types import Broadcaster, Dimcaster, DimMerger, CoordMerger
 
 from ._dimcast import unilateral_dimcast, trivial_dimcast
 
@@ -14,7 +12,11 @@ from ._template import Template
 
 
 if TYPE_CHECKING:
+    from typing import Callable, Literal, Sequence, Tuple
+    from ..typing import Dims, Coords
     from .._base import XTensor
+    from ._types import Broadcaster, Dimcaster, DimMerger, CoordMerger
+
 
 
 

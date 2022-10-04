@@ -1,24 +1,21 @@
 from __future__ import annotations
 from functools import wraps
 import numpy.typing as npt
-from typing import TYPE_CHECKING, Callable, Tuple, TypeVar 
-from typing_extensions import ParamSpec, Concatenate
-
-
-from .typing import BinaryOperator, Dims, Coords, TernaryOperator
-
-from .broadcast._types import Broadcaster
 
 from .broadcast._broadcast import vanilla_broadcaster, cast
-
 from .basic_utils import mergedims, mergecoords
 
+
+from typing import TYPE_CHECKING 
+
 if TYPE_CHECKING:
+    from typing import Callable, TypeVar
+    from typing_extensions import ParamSpec, Concatenate
+    from .typing import BinaryOperator, Dims, Coords, TernaryOperator
+    from .broadcast._types import Broadcaster
     from ._base import XTensor
-
-
-O = ParamSpec('O')
-T = TypeVar('T')
+    O = ParamSpec('O')
+    T = TypeVar('T')
 
 
 def promote_binary_operator(

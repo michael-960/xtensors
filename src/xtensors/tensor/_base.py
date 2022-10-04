@@ -1,11 +1,8 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Dict, Generic, List, Optional, Sequence, Tuple, TypeVar, overload
-from numpy.typing import ArrayLike, NDArray
 import numpy as np
 
-from .broadcast import vanilla_broadcaster, Broadcaster
-from .typing import BinaryOperator, DimLike, DimsLike, TensorLike, Array
+from .broadcast import vanilla_broadcaster
 
 from ._decors import promote_binary_operator
 
@@ -14,7 +11,13 @@ from .basic_utils._misc import strip
 
 from ._slice import TensorIndexer
 
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from numpy.typing import NDArray
+    from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
+    from .typing import BinaryOperator, DimLike, DimsLike, TensorLike, Array
+    from .broadcast import Broadcaster
 
 def inject_broadcast(broadcaster: Broadcaster):
     promote = promote_binary_operator(broadcaster)
@@ -264,5 +267,6 @@ class XTensor:
     def __ge__(self): return lambda X, Y: X>=Y
 
     def __array__(self): return self.data
+
 
 
