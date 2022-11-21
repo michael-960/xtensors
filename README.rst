@@ -7,4 +7,4 @@ xtensors
 
 Documentation
 ==============
-Documentaion is available on `https://xtensors.readthedocs.io/en/latest`_
+Documentaion is available on `<https://xtensors.readthedocs.io/en/latest>`_
