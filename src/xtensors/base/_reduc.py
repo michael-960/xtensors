@@ -21,6 +21,7 @@ def _reduction_factory(_np_func: _np_reduction_func) -> ReductionFunc:
     @xtt.generalize_at_0
     def _reduce(X: xtt.XTensor, /, dim: xtt.DimLike|xtt.DimsLike|None=None) -> xtt.XTensor:
         axes = X.get_axes(dim)
+
         _y = _np_func(X.data, axis=tuple(axes))
 
         return xtt.XTensor(_y, dims=xtt.strip(X.dims, axes), coords=xtt.strip(X.coords, axes))

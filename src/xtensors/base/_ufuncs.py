@@ -1,9 +1,12 @@
 from __future__ import annotations
-from typing import Protocol
+from functools import wraps
+from typing import Callable, Protocol
+from textwrap import dedent
 
 import numpy as np
 
 from .. import tensor as xtt
+
 
 
 class _ufunc(Protocol):
@@ -12,6 +15,17 @@ class _ufunc(Protocol):
 
 class UFunc(Protocol):
     def __call__(self, x: xtt.TensorLike, /) -> xtt.XTensor: ...
+
+
+def _inject_docs(ufunc: UFunc) -> UFunc:
+    _docs = dedent("""
+        :type X: TensorLike
+        :param X: Input tensor
+
+        :return: XTensor
+    """)
+    ufunc.__doc__ = _docs
+    return ufunc
 
 
 def _ufunc_factory(_np_func: _ufunc) -> UFunc:
@@ -24,7 +38,8 @@ def _ufunc_factory(_np_func: _ufunc) -> UFunc:
 def _sigmoid(__x1: np.ndarray):
     return .5 * (1. + np.tanh(__x1/2))
 
-sigmoid = _ufunc_factory(_sigmoid)
+
+sigmoid = _inject_docs(_ufunc_factory(_sigmoid))
 
 exp = _ufunc_factory(np.exp)
 
@@ -39,4 +54,5 @@ tan = _ufunc_factory(np.tan)
 cosh = _ufunc_factory(np.cosh)
 sinh = _ufunc_factory(np.sinh)
 tanh = _ufunc_factory(np.tanh)
+
 

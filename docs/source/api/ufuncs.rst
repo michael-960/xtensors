@@ -1,0 +1,7 @@
+UFuncs
+=======
+
+.. autofunc:: xtensors.sigmoid
+
+
+

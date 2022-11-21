@@ -1,5 +1,10 @@
 from .base import *
 
+from .tensor import *
+
+from .version import __version__
+
+
 
 # from .unify import (
 #         rename, 
