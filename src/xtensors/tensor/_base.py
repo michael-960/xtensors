@@ -39,7 +39,7 @@ class XTensor:
     def __init__(self, data: Array,
         dims: Optional[Sequence[str|None]]=None,
         coords: Optional[Sequence[Sequence[Any]|NDArray[Any]|None]]=None,
-            ) -> None:
+    ) -> None:
 
 
         self.data = data.__array__()

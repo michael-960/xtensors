@@ -1,7 +1,7 @@
 UFuncs
 =======
 
-.. autofunc:: xtensors.sigmoid
+.. autofunction:: xtensors.sigmoid
 
 
 
