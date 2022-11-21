@@ -44,7 +44,10 @@ from ._arg import (
     _nancoordmin as nancoordmin
 )
 
-from ._args import (argsmin, argsmax, nanargsmax, nanargsmin, coordsmin, coordsmax)
+from ._args import (argsmin, argsmax, nanargsmax, nanargsmin, ArgsFunction)
+
+from ._coords import (coordsmin, coordsmax, nancoordsmax, nancoordsmin, CoordsFunction)
+
 
 from ._reduc_2to1 import diagonal
 

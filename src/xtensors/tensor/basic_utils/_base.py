@@ -29,3 +29,4 @@ def to_xtensor(x: TensorLike) -> XTensor:
         return XTensor(np.array(list(x)))
 
     raise TypeError(f'Object cannot be safely converted to XTensor')
+
