@@ -4,6 +4,15 @@ xtensors
 `xtensors` is a named tensor utility library.
 
 
+Installation
+=============
+Install with :code:`pip`:
+
+.. code-block:: console
+
+    pip install xtensors
+
+
 
 Documentation
 ==============
