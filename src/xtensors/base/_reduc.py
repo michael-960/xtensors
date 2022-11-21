@@ -1,8 +1,11 @@
 from __future__ import annotations
+from functools import wraps
+from textwrap import dedent
 from typing import Protocol, Tuple
 import numpy as np
 
 from .. import tensor as xtt
+from ..tensor import XTensor, TensorLike, DimLike, DimsLike
 
 
 '''
@@ -28,21 +31,79 @@ def _reduction_factory(_np_func: _np_reduction_func) -> ReductionFunc:
     return _reduce
 
 
-_sum = _reduction_factory(np.sum)
-_mean = _reduction_factory(np.mean)
-_std = _reduction_factory(np.std)
+def _inject_docs(r: ReductionFunc, doc: str):
+    r.__doc__ = dedent(doc)
+    return r
 
-_nanmean = _reduction_factory(np.nanmean)
-_nanstd = _reduction_factory(np.nanstd)
-_nansum = _reduction_factory(np.nansum)
+def _inject_sig(r: ReductionFunc):
+    def _dummy(x: TensorLike, /, dim: DimLike|DimsLike|None) -> XTensor:
+        ...
 
-_max = _reduction_factory(np.max)
-_min = _reduction_factory(np.min)
+    _dummy.__doc__ = r.__doc__
+    return wraps(_dummy)(r)
 
-_nanmax = _reduction_factory(np.nanmax)
-_nanmin = _reduction_factory(np.nanmin)
+def postproc(doc: str):
+    def _postproc(r: ReductionFunc):
+        return _inject_sig(_inject_docs(r, doc))
 
-_all = _reduction_factory(np.all)
-_any = _reduction_factory(np.any)
+    return _postproc
+
+
+
+_sum = postproc(r"""
+                :return: :math:`\sum_{\mathrm{dim}} x`
+
+                """)(_reduction_factory(np.sum))
+
+_mean = postproc(r"""
+                :return: :math:`\braket{x}_\mathrm{dim}`
+                 """)(_reduction_factory(np.mean))
+
+
+_std = postproc(r"""
+                :return: :math:`\sqrt{\braket{x^2}_\mathrm{dim} - \braket{x}_\mathrm{dim}^2}`
+                """)(_reduction_factory(np.std))
+
+_nanmean = postproc(r"""
+                    Same as :py:meth:`xtensors.mean`, but :code:`nan` is ignored
+                    """)(_reduction_factory(np.nanmean))
+
+_nanstd = postproc(r"""
+                   Same as :py:meth:`xtensors.std`, but :code:`nan` is ignored
+                    """)(_reduction_factory(np.nanstd))
+
+_nansum = postproc(r"""
+                   Same as :py:meth:`xtensors.sum`, but :code:`nan` is ignored
+                    """)(_reduction_factory(np.nansum))
+
+
+_max = postproc(r"""
+                :return: :math:`\max_\mathrm{dim} x`
+                """)(_reduction_factory(np.max))
+
+_min = postproc(r"""
+                :return: :math:`\min_\mathrm{dim} x`
+                """)(_reduction_factory(np.min))
+
+_nanmax = postproc(r"""
+                Same as :py:meth:`xtensors.max`, but :code:`nan` is ignored
+                """)(_reduction_factory(np.nanmax))
+
+_nanmin = postproc(r"""
+                Same as :py:meth:`xtensors.min`, but :code:`nan` is ignored
+                """)(_reduction_factory(np.nanmin))
+
+_all = postproc(r"""
+                Used on bool-valued :code:`TensorLike` objects,
+                similar to :code:`np.all`
+                """)(_reduction_factory(np.all))
+
+
+_any = postproc(r"""Used on bool-valued :code:`TensorLike` objects,
+                similar to :code:`np.any`
+                """)(_reduction_factory(np.any))
+
+
+
 
 

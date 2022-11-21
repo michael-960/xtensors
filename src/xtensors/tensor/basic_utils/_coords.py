@@ -39,11 +39,11 @@ def mergecoords(X: XTensor|Coords, Y: XTensor|Coords, rtol: float=1e-8, atol: fl
 
 def coords_same(coords1: Coords, coords2: Coords, /, *,
         rtol: float=1e-8, atol: float=1e-8, none_compatible: bool=False) -> bool:
-    '''
+    """
     Return whether the given coordinates are the same.
     Two coordinate sequences are considered the same if:
         - 
-    '''
+    """
     
     if len(coords1) != len(coords2): return False
 

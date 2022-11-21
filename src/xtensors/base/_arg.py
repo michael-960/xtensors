@@ -1,10 +1,13 @@
 from __future__ import annotations
+from functools import wraps
+from textwrap import dedent
 from typing import Protocol
 
 
 import numpy as np
 import numpy.typing as npt
 from .. import tensor as xtt
+from ..tensor import XTensor
 
 '''
 Arg functions:
@@ -34,7 +37,28 @@ def _reduction_factory(_np_func: _np_arg_func) -> ArgFunction:
                 coords=xtt.strip(X.coords, [axis]))
     return _reduce
 
-_argmax = _reduction_factory(np.argmax)
+
+def _inject_docs(r: ArgFunction, doc: str):
+    r.__doc__ = dedent(doc)
+    return r
+
+def _inject_sig(r: ArgFunction):
+    def _dummy(x: xtt.TensorLike, /, dim: xtt.DimLike|xtt.DimsLike|None) -> XTensor:
+        ...
+    _dummy.__doc__ = r.__doc__
+    return wraps(_dummy)(r)
+
+def postproc(doc: str):
+    def _postproc(r: ArgFunction):
+        return _inject_sig(_inject_docs(r, doc))
+
+    return _postproc
+
+
+_argmax = postproc("""
+                    :return: 
+                   """)(_reduction_factory(np.argmax))
+
 _argmin = _reduction_factory(np.argmin)
 
 _nanargmax = _reduction_factory(np.nanargmax)

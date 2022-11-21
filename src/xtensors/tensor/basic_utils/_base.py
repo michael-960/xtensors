@@ -11,6 +11,10 @@ if TYPE_CHECKING:
 
 
 def to_xtensor(x: TensorLike) -> XTensor:
+    """
+    Coerce a :py:class:`xtensor.TensorLike` object to :py:class:`XTensor`
+
+    """
     from .._base import XTensor
     if isinstance(x, XTensor): return x
     

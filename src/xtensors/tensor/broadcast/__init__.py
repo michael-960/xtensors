@@ -1,5 +1,6 @@
 '''
-# 1. Broadcasting
+1. Broadcasting
+================
 
 This module tries to address the problem of broadcasting two tensors.
 
@@ -43,7 +44,8 @@ matching
     for p = 1, ..., N
 
 
-# 2. Broadcasters
+2. Broadcasters
+================
 
 A *broadcaster* should:
 
@@ -54,13 +56,17 @@ A *broadcaster* should:
 
 
 
-# 3. Named Tensors
+3. Named Tensors
+=================
 
 This is further complicated when named dimensions are introduced. In general,
 one may want to use named tensors without having to name all the dimensions,
 consider for example two partially named tensors
 
     img: 
+
+    .. code::
+
         shape  (10, 3,       256, 384)
         axis    0   1        2    3
         name    ?   CHANNEL  H    W
@@ -68,44 +74,56 @@ consider for example two partially named tensors
 
     lbl:
 
+    .. code::
+
         shape  (10, 256, 384)
         axis    0   1    2
         name    ?   H    W
 
 The desired broadcasting here should be 
     
-    (img axis, lbl axis): (0, 0) (2, 1) (3, 2)
+    .. code::
 
-    output: (10, 3, 256, 384)
+        (img axis, lbl axis): (0, 0) (2, 1) (3, 2)
+
+        output: (10, 3, 256, 384)
 
 
 
 Another example:
 
     lbl_truth:
+
+    .. code::
+
         shape   (20, 512, 512)
         axis     0   1    2
         name     ?   H    W
 
     lbl_prob:
+
+    .. code::
+
         shape   (20, 3,     512, 512)
         axis     0   1      2    3
         name     ?   CLASS  H    W
 
     lbl_pred:
+
+    .. code::
+
         shape   (20, 1,     17,    15,    512,  512)
         axis     ?   SCALE1 SCALE2 SCALE3 H     W
 
 
-# 4. Principles
+4. Principles
+==============
     
     (a) The result of broadcasting two tensors X and Y should have the same
         number of dimensions as the tensor with more dimensions
 
     (b) If X and Y has dimensions with the same name, they should be broadcast
         together
-
-
 
 '''
 
@@ -114,6 +132,11 @@ from ._dimcast import castdim, unilateral_dimcast
 from ._template import Template, AxisSelector, IndexSelector, DimNameSelector
 
 from typing import TYPE_CHECKING as __TYPE_CHECKING
-if __TYPE_CHECKING:
-    from ._types import Broadcaster, Dimcaster
+
+from ._types import Broadcaster, Dimcaster, DimMerger, CoordMerger
+
+
+
+
+
 

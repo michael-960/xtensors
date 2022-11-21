@@ -7,9 +7,12 @@ from ._generalize import generalize_at_0, generalize_at_1
 
 from ._coords import coords_same
 
+from ._misc import copy_sig
+
+
 if TYPE_CHECKING:
     from .._base import XTensor
-    from ..typing import AxesPermutation, Dims, Coords, DimLike
+    from ..typing import AxesPermutation, Dims, Coords, DimLike, TensorLike
 
 
 def permutation_well_defined(axes: AxesPermutation, rank: int|None=None) -> bool:
@@ -22,11 +25,19 @@ def permutation_well_defined(axes: AxesPermutation, rank: int|None=None) -> bool
     return condition
 
 
+def _permute(X: TensorLike, axes: AxesPermutation) -> XTensor:  ...
+
+@copy_sig(_permute)
 @generalize_at_0
 def permute(X: XTensor, axes: AxesPermutation) -> XTensor:
-    '''
-    
-    '''
+    """
+    Permute the axes of :code:`X` 
+
+    :param X: target tensor 
+    :param axes: An :py:class:`AxesPermutation` (list of integers) object that
+            specifies how the axes should be permuted.
+
+    """
     from .._base import XTensor
 
     data_ = X.data
@@ -55,14 +66,26 @@ def permute(X: XTensor, axes: AxesPermutation) -> XTensor:
     return Y
 
 
+def _newdims(X: TensorLike, *,
+        dims: Dims|None=None, coords: Coords|None=None,
+        position: Literal['left','right']='left') -> XTensor: ...
+
+@copy_sig(_newdims)
 @generalize_at_0
 def newdims(X: XTensor, *,
         dims: Dims|None=None, coords: Coords|None=None,
         position: Literal['left','right']='left') -> XTensor:
-    '''
+    """
     Pad singleton dimensions to the given tensor with the specified dimension
     names and coordinates.
-    ''' 
+
+    :param X: target tensor
+    :param dims: (optional, :py:class:`xtensors.Dims`) a list of strings specifying the new dimension names
+    :param coords: (optional, :py:class:`xtensors.Coords`) a list of arrays specifying the new coordinates
+    :param position: :code:`left` or :code:`right`, where the new dimensions are padded
+
+    """
+
     from .._base import XTensor
     if dims is not None and coords is not None:
         assert len(dims) == len(coords)
@@ -97,13 +120,18 @@ def newdims(X: XTensor, *,
         return XTensor(_y, dims=list(X.dims)+newdims, coords=list(X.coords)+newcoords)
 
 
+def _align(X: TensorLike, Y: TensorLike) -> Tuple[XTensor, XTensor]: ...
+
+
+@copy_sig(_align)
 @generalize_at_0
 @generalize_at_1
 def align(X: XTensor, Y: XTensor) -> Tuple[XTensor, XTensor]:
-    '''
+    """
     Pad singleton unnamed dimensions to (at most) one of the two tensors so that the
     returned tensors have the same number of dimnesions.
-    '''
+
+    """
     if len(X.shape) > len(Y.shape):
         return X, newdims(Y, dims=[None for _ in range(len(Y.shape), len(X.shape))])
     
@@ -116,6 +144,14 @@ def align(X: XTensor, Y: XTensor) -> Tuple[XTensor, XTensor]:
 def stack(x: Sequence[XTensor],
         newdim: str|None=None, 
         position: Literal['left', 'right']='left') -> XTensor:
+    """
+    Stack a sequence of tensors along a new axis
+    
+    :param x: sequence of tensors
+    :param newdim: the name of the new dimension
+    :param position: :code:`left` or :code:`right`, where the new dimension is padded
+
+    """
     from .._base import XTensor
 
     for X in x:
@@ -140,7 +176,6 @@ def shapes_broadcastable(a: Sequence[int], b: Sequence[int]) -> bool:
     return True
 
 
-
 @generalize_at_0
 def shape(X: XTensor): return X.shape
 
@@ -150,6 +185,15 @@ def rank(X: XTensor): return X.rank
 
 
 def index(X: XTensor, *indices: Tuple[DimLike, int], ignore_if_absent: bool=False) -> XTensor:
+    """
+    Index a tensor on multiple dimensions
+
+    :param X: target tensor
+    :param indices: a series of (dim, index) pairs
+    :param ignore_if_absent: if :code:`True`, dimension names that are specified but not found in 
+                            :code:`X` will be ignored without raising errors.
+
+    """
     Y = X.viewcopy()
 
     for ind in indices:
@@ -160,9 +204,5 @@ def index(X: XTensor, *indices: Tuple[DimLike, int], ignore_if_absent: bool=Fals
         Y = Y.get(ind[0], ind[1])
 
     return Y
-
-
-
-
 
 

@@ -13,11 +13,13 @@ from ._slice import TensorIndexer
 
 from typing import TYPE_CHECKING
 
+from .typing import DimLike, DimsLike, TensorLike, Array
+
 if TYPE_CHECKING:
     from numpy.typing import NDArray
     from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
-    from .typing import BinaryOperator, DimLike, DimsLike, TensorLike, Array
     from .broadcast import Broadcaster
+    from .typing import BinaryOperator
 
 def inject_broadcast(broadcaster: Broadcaster):
     promote = promote_binary_operator(broadcaster)
@@ -36,14 +38,25 @@ def inject_broadcast(broadcaster: Broadcaster):
 
 
 class XTensor:
+    r"""
+    A wrapper class of :code:`np.ndarray` that attaches names to each axis.
+    "axis" and "dimension" are synonyms in this context.
+
+    """
     def __init__(self, data: Array,
         dims: Optional[Sequence[str|None]]=None,
         coords: Optional[Sequence[Sequence[Any]|NDArray[Any]|None]]=None,
     ) -> None:
+        """
+        :param data: the underlying array object, accepts any object that implements the :code:`__array__` protocol
+        :param dims: a sequence of strings specifying the names of each axis
+        :param coords: a sequence of 1D arrays specifying the coordinates of each axis
 
+        By default, each dimension has :code:`None` as both its name and coordinates.
+
+        """
 
         self.data = data.__array__()
-
 
         self._dim_axis_dict: Dict[str,int] = dict()
 
@@ -54,28 +67,64 @@ class XTensor:
         self.set_coords(coords)
 
     def viewcopy(self) -> XTensor:
+        r"""
+        :return: a new :code:`XTensor` object with the *same* underlying :code:`data`. 
+                Useful when one wishes to attach different metadata to the same array.
+
+        """
         return XTensor(self.data, self.dims, self.coords)
     
     def item(self) -> float:
+        r"""
+        :return: :code:`data.item()`
+
+        :raises: :code:`ValueError` if :code:`data` is not scalar
+
+        """
         return self.data.item()
 
     @property
     def dims(self) -> Tuple[str|None,...]:
+        """
+        A tuple of strings or None corresponding to each axis's name.
+
+        """
         return tuple(self._dims)
 
     @property
     def coords(self) -> Tuple[NDArray[Any]|None,...]:
+        r"""
+        A tuple of :code:`np.ndarray` or None corresponding to each axis's
+        coordinates.
+
+        """
+
         return tuple(self._coords)
 
     @property
     def shape(self) -> Tuple[int,...]:
+        r"""
+        A tuple of :code:`int`, same as :code:`data.shape`
+
+        """
         return self.data.shape
 
     @property
     def rank(self) -> int:
+        r"""
+        Number of axes, same as :code:`data.ndim`
+        """
         return len(self.data.shape)
 
     def get_axis(self, dim: DimLike) -> int:
+        r"""
+        Performs an axis lookup with a :code:`DimLike` object
+
+        :return: an integer representing the resulting axis
+
+        :raises: TypeError if :code:`dim` is not a valid :code:`DimLike` object
+
+        """
         try:
             dim = dim.__get_dimname__() # type: ignore
         except AttributeError: pass
@@ -92,7 +141,7 @@ class XTensor:
             assert isinstance(dim[1], int)
             assert len(dim) == 2
         except AssertionError as e:
-            raise ValueError('Dimlike should be int, str, or (str, int)') from e
+            raise TypeError('Dimlike should be int, str, or (str, int)') from e
 
 
         try:
@@ -101,6 +150,12 @@ class XTensor:
             return self.get_axis(dim[1])
 
     def get_axes(self, dims: DimLike|DimsLike|None) -> List[int]:
+        r"""
+        Performs multiple axis lookups
+
+        :return: A list of axes (integers)
+
+        """
         if dims is None:
             return [i for i in range(self.rank)]
         try:
@@ -116,6 +171,10 @@ class XTensor:
         return axes
             
     def set_dims(self, dims: Sequence[str|None]|None) -> None:
+        r"""
+        Set axis names.
+
+        """
         if dims is None:
             self._dims = [None for _ in self.data.shape]
         else:
@@ -130,16 +189,31 @@ class XTensor:
                     self._dim_axis_dict[dim] = axis
 
     def set_dim(self, dim: DimLike, newdim: str|None) -> None:
+        r"""
+        Set the name of a single axis.
+
+        """
         axis = self.get_axis(dim)
         new_dims = self._dims.copy()
         new_dims[axis] = newdim
         self.set_dims(new_dims)
 
     def get_coord(self, dim: DimLike) -> NDArray|None:
+        r"""
+        Return the coordinates of the given axis.
+
+        :return: If the axis has coordinates, an :code:`np.ndarray` is returned, else :code:`None` is returned.
+
+        """
         axis = self.get_axis(dim)
         return self._coords[axis]
 
     def set_coords(self, coords: Sequence[Sequence[Any]|NDArray[Any]|None]|None) -> None:
+        r"""
+        Set coordinates.
+
+        """
+
         if coords is None:
             self._coords = [None for _ in self.data.shape]
         else:
@@ -154,6 +228,11 @@ class XTensor:
             self._coords = coords_clean
 
     def set_coord(self, dim: DimLike, coord: Sequence[Any]|NDArray[Any]|None) -> None:
+        r"""
+        Set the coordinates of a single axis.
+
+        """
+
         axis = self.get_axis(dim)
         new_coords = self._coords.copy()
         if coord is None:
@@ -164,6 +243,10 @@ class XTensor:
 
 
     def slc(self, dim: DimLike, slc: slice) -> XTensor:
+        """
+        :return: A new XTensor object with :code:`dim` sliced by :code:`slice`.
+
+        """
         axis = self.get_axis(dim)
 
         slices: List[slice] = [slice(None, None, None)]*self.rank
@@ -180,6 +263,10 @@ class XTensor:
 
 
     def get(self, dim: DimLike, index: int) -> XTensor:
+        r"""
+        :return: A new XTensor object with :code:`dim` indexed by :code:`index`.
+
+        """
         axis = self.get_axis(dim)
         
         slices: List[slice|int] = [slice(None, None, None)]*self.rank
@@ -193,7 +280,9 @@ class XTensor:
         return XTensor(data, dims=dims, coords=coords)
 
     def __getitem__(self, slices: TensorIndexer|Tuple[TensorIndexer,...]) -> XTensor:
+        """
 
+        """
         if isinstance(slices, tuple):
             _Y = slices[0].index(self)
             if len(slices) == 1: 

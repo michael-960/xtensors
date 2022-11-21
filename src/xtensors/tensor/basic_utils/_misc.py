@@ -1,7 +1,8 @@
 from __future__ import annotations
+from functools import wraps
 
 
-from typing import List, Literal, Sequence, Tuple, TypeVar, overload
+from typing import Callable, List, Literal, Sequence, Tuple, TypeVar, overload
 
 
 T = TypeVar('T')
@@ -25,4 +26,20 @@ def strip(l: Sequence[T], indices: Sequence[int], only_remaining: bool=True) -> 
 
 
 
+def copy_sig(f: Callable):
+    def wrapper(g: T) -> T:
+        _doc = g.__doc__
+        g = wraps(f)(g)
+        g.__doc__ = _doc
+        return g
+
+    return wrapper
+
+
+def copy_doc(f: Callable):
+
+    def wrapper(g: T) -> T:
+        g.__doc__ = f.__doc__
+        return g
+    return wrapper
 

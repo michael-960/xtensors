@@ -9,7 +9,7 @@
 project = 'xtensors'
 copyright = '2022, Michael Wang'
 author = 'Michael Wang'
-release = '0.1.8'
+release = '1.0.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -40,3 +40,8 @@ def skip(app, what, name, obj, would_skip, options):
 
 def setup(app):
     app.connect("autodoc-skip-member", skip)
+
+
+autodoc_type_aliases = {
+    'TensorLike': 'TensorLike'
+}

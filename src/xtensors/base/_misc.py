@@ -36,3 +36,4 @@ def get_rank(x: Any) -> int:
 
     return 0
 
+

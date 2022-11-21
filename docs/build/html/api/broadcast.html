@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tensor Broadcasting &mdash; xtensors 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Template Broadcasting" href="broadcast_template.html" />
+    <link rel="prev" title="Tensor Utilities" href="tensor_utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> xtensors
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../broadcast.html">Tensor Broadcasting</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tensor.html">Tensor API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tensor_utils.html">Tensor Utilities</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Tensor Broadcasting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xtensors.broadcast"><code class="docutils literal notranslate"><span class="pre">broadcast()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xtensors.unilateral_broadcaster"><code class="docutils literal notranslate"><span class="pre">unilateral_broadcaster()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xtensors.vanilla_broadcaster"><code class="docutils literal notranslate"><span class="pre">vanilla_broadcaster()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xtensors.cast"><code class="docutils literal notranslate"><span class="pre">cast()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="broadcast_template.html">Template Broadcasting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="typing.html">Typing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ufuncs.html">UFuncs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binops.html">Binary Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reduc.html">Reduction Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="argfunc.html">Argument Functions and Coordinate Functions</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">xtensors</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+      <li class="breadcrumb-item active">Tensor Broadcasting</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/broadcast.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tensor-broadcasting">
+<h1>Tensor Broadcasting<a class="headerlink" href="#tensor-broadcasting" title="Permalink to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="xtensors.broadcast">
+<span class="sig-prename descclassname"><span class="pre">xtensors.</span></span><span class="sig-name descname"><span class="pre">broadcast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tensor.html#xtensors.XTensor" title="xtensors.XTensor"><span class="pre">XTensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tensor.html#xtensors.XTensor" title="xtensors.XTensor"><span class="pre">XTensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimcast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="typing.html#xtensors.Dimcaster" title="xtensors.Dimcaster"><span class="pre">Dimcaster</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimmerge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="typing.html#xtensors.DimMerger" title="xtensors.DimMerger"><span class="pre">DimMerger</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordmerge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="typing.html#xtensors.CoordMerger" title="xtensors.CoordMerger"><span class="pre">CoordMerger</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapecheck</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">np.ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">np.ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dims</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Coords</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#xtensors.broadcast" title="Permalink to this definition"></a></dt>
+<dd><p>Given two named tensors, return two numpy ND arrays of the same rank that
+can be broadcast together, along with the dimension names and coordinates
+after broadcasting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong><strong>,</strong><strong>Y</strong> – <a class="reference internal" href="tensor.html#xtensors.XTensor" title="xtensors.XTensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">xtensors.XTensor</span></code></a> objects to be broadcast together</p></li>
+<li><p><strong>dimcast</strong> – An object implementing the <a class="reference internal" href="typing.html#xtensors.Dimcaster" title="xtensors.Dimcaster"><code class="xref py py-class docutils literal notranslate"><span class="pre">xtensors.Dimcaster</span></code></a> protocol</p></li>
+<li><p><strong>dimmerge</strong> – An object implmenting the <a class="reference internal" href="typing.html#xtensors.DimMerger" title="xtensors.DimMerger"><code class="xref py py-class docutils literal notranslate"><span class="pre">xtensors.DimMerger</span></code></a> protocol</p></li>
+<li><p><strong>coordmerge</strong> – An object implementing the <a class="reference internal" href="typing.html#xtensors.CoordMerger" title="xtensors.CoordMerger"><code class="xref py py-class docutils literal notranslate"><span class="pre">xtensors.CoordMerger</span></code></a> protocol</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xtensors.unilateral_broadcaster">
+<span class="sig-prename descclassname"><span class="pre">xtensors.</span></span><span class="sig-name descname"><span class="pre">unilateral_broadcaster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tensor.html#xtensors.XTensor" title="xtensors.XTensor"><span class="pre">XTensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tensor.html#xtensors.XTensor" title="xtensors.XTensor"><span class="pre">XTensor</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">np.ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">np.ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dims</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Coords</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#xtensors.unilateral_broadcaster" title="Permalink to this definition"></a></dt>
+<dd><p>This broadcaster takes the second tensor and permutes its dimensions to match
+the first one. The algorithm for finding the permutation is defined by
+unilateral_dimcast()</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xtensors.vanilla_broadcaster">
+<span class="sig-prename descclassname"><span class="pre">xtensors.</span></span><span class="sig-name descname"><span class="pre">vanilla_broadcaster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tensor.html#xtensors.XTensor" title="xtensors.XTensor"><span class="pre">XTensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tensor.html#xtensors.XTensor" title="xtensors.XTensor"><span class="pre">XTensor</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">np.ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">np.ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dims</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Coords</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#xtensors.vanilla_broadcaster" title="Permalink to this definition"></a></dt>
+<dd><p>Vanilla broadcaster: the same as what’s used in torch’s named tensors.
+Dimension names (or None) have to match at the same axis position.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xtensors.cast">
+<span class="sig-prename descclassname"><span class="pre">xtensors.</span></span><span class="sig-name descname"><span class="pre">cast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">broadcaster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="typing.html#xtensors.Broadcaster" title="xtensors.tensor.broadcast._types.Broadcaster"><span class="pre">Broadcaster</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tensor.html#xtensors.XTensor" title="xtensors.XTensor"><span class="pre">XTensor</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="tensor.html#xtensors.XTensor" title="xtensors.XTensor"><span class="pre">XTensor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="tensor.html#xtensors.XTensor" title="xtensors.XTensor"><span class="pre">XTensor</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#xtensors.cast" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">xtensors.</span></span><span class="sig-name descname"><span class="pre">cast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">broadcaster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="typing.html#xtensors.Broadcaster" title="xtensors.tensor.broadcast._types.Broadcaster"><span class="pre">Broadcaster</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tensor.html#xtensors.XTensor" title="xtensors.XTensor"><span class="pre">XTensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tensor.html#xtensors.XTensor" title="xtensors.XTensor"><span class="pre">XTensor</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="tensor.html#xtensors.XTensor" title="xtensors.XTensor"><span class="pre">XTensor</span></a></span></span></dt>
+<dd><p>Broadcast the second tensor with <code class="code docutils literal notranslate"><span class="pre">broadcaster(X,</span> <span class="pre">Y)</span></code>. If <code class="code docutils literal notranslate"><span class="pre">Y</span></code> is
+<code class="code docutils literal notranslate"><span class="pre">None</span></code> or not provided, a casting function is returned instead.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tensor_utils.html" class="btn btn-neutral float-left" title="Tensor Utilities" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="broadcast_template.html" class="btn btn-neutral float-right" title="Template Broadcasting" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Michael Wang.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

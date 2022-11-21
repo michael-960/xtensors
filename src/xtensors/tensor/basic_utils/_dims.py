@@ -7,9 +7,11 @@ from ._axes import permute
 
 from ._generalize import generalize_at_0
 
+from ._misc import copy_sig
+
 
 if TYPE_CHECKING:
-    from .._base import XTensor
+    from .._base import XTensor, TensorLike
     from ..typing import DimsLike, DimLike, Dims
 
 
@@ -43,7 +45,15 @@ def mergedims(X: XTensor|Dims, Y: XTensor|Dims) -> Dims:
 
 
 def dimslast(X: XTensor, dims: Sequence[str]) -> XTensor:
-    '''Move named dimensions to the right.'''
+    """
+        Move named dimensions to the right.
+
+        :param X: target tensor
+        :param dims: a sequence of dimension names
+
+        :return: a new :py:class:`xtensors.XTensor` with :code:`dims` moved to the right.
+
+    """
     axes: List[int] = [X.get_axis(dim) for dim in dims]
     other_axes: List[int|None] = [axis for axis in range(X.rank) if axis not in axes]
 
@@ -51,16 +61,38 @@ def dimslast(X: XTensor, dims: Sequence[str]) -> XTensor:
 
 
 def dimsfirst(X: XTensor, dims: Sequence[str]) -> XTensor:
-    '''Move named dimensions to the left.'''
+    """
+        Move named dimensions to the left.
+
+        :param X: target tensor
+        :param dims: a sequence of dimension names
+
+        :return: a new :py:class:`xtensors.XTensor` with :code:`dims` moved to the left
+
+    """
     axes: List[int] = [X.get_axis(dim) for dim in dims]
     other_axes: List[int|None] = [axis for axis in range(X.rank) if axis not in axes]
 
     return permute(X, axes+other_axes)
 
+
+def _flatten(X: TensorLike, /, dims: DimsLike, dim_out: str|None, *,
+             position: Literal['left', 'right']='right') -> XTensor: ...
+
+@copy_sig(_flatten)
 @generalize_at_0
 def flatten(X: XTensor, /,
         dims: DimsLike, dim_out: str|None, *,
         position: Literal['left', 'right']='right') -> XTensor:
+    """
+    Flatten a tensor
+
+    :param X: target tensor
+    :param dims: dimensions to be flattened
+    :param dim_out: name of the new dimension
+    :param position: :code:`left` or :code:`right`, where the new dimension is placed
+
+    """
 
     from .._base import XTensor
     x = X.data
@@ -84,12 +116,24 @@ def flatten(X: XTensor, /,
         return Y
 
 
+def _name_dim_if_absent(
+        X: TensorLike, /, axis: int, dim: str, *, force: bool=False
+) -> XTensor: ...
+
+
+@copy_sig(_name_dim_if_absent)
 @generalize_at_0
 def name_dim_if_absent(X: XTensor, /, axis: int, dim: str, *, force: bool=False) -> XTensor:
-    '''
-    Ensure that X has a named dimension called [dim]. If not already, the
-    dimension at [axis] will be named so.
-    '''
+    """
+    Ensure that :code:`X` has a named dimension called :code:`dim`. If not
+    already, the dimension at :code:`axis` will be named so.
+
+    :param X: target tensor
+    :param axis: the axis to be renamed
+    :param dim: axis name
+    :param force: if :code:`True`, original axis name will be overwritten
+
+    """
     X1 = X.viewcopy()
     if dim in X.dims:
         return X1

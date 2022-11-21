@@ -13,5 +13,5 @@ from ._coords import mergecoords, coords_same
 from ._generalize import generalize_at_0, generalize_at_1, generalize_at_2, generalize_at_3
 
 
-from ._misc import strip 
+from ._misc import strip, copy_sig
 

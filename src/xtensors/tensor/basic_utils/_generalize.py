@@ -11,6 +11,9 @@ from typing import TYPE_CHECKING, Any, Callable, TypeVar
 
 from ._base import to_xtensor
 
+from ._misc import copy_doc
+
+
 
 if TYPE_CHECKING:
 
@@ -33,10 +36,13 @@ def generalize_at_0(
     Generalize the first argument of a function from accepting XTensor to
     TensorLike objects
     '''
+
     @wraps(func)
     def wrapped(X: TensorLike, *args: O.args, **kwargs: O.kwargs) -> R:
         return func(to_xtensor(X), *args, **kwargs)
+
     return wrapped
+
 
 def generalize_at_1(
         func: Callable[Concatenate[T, XTensor, O], R]
@@ -52,7 +58,7 @@ def generalize_at_1(
 def generalize_at_2(
         func: Callable[Concatenate[T, U, XTensor, O], R]
     ) -> Callable[Concatenate[T, U, TensorLike, O], R]:
-    '''Generalize the second argument of a function'''
+    '''Generalize the third argument of a function'''
     @wraps(func)
     def wrapped(arg0: T, arg1: U, X: TensorLike, *args: O.args, **kwargs: O.kwargs) -> R:
         return func(arg0, arg1, to_xtensor(X), *args, **kwargs)
@@ -62,7 +68,7 @@ def generalize_at_2(
 def generalize_at_3(
         func: Callable[Concatenate[T, U, V, XTensor, O], R]
     ) -> Callable[Concatenate[T, U, V, TensorLike, O], R]:
-    '''Generalize the second argument of a function'''
+    '''Generalize the fourth argument of a function'''
     @wraps(func)
     def wrapped(arg0: T, arg1: U, arg2: V, X: TensorLike, *args: O.args, **kwargs: O.kwargs) -> R:
         return func(arg0, arg1, arg2, to_xtensor(X), *args, **kwargs)

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Template Broadcasting &mdash; xtensors 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Typing" href="typing.html" />
+    <link rel="prev" title="Tensor Broadcasting" href="broadcast.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> xtensors
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../broadcast.html">Tensor Broadcasting</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tensor.html">Tensor API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tensor_utils.html">Tensor Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="broadcast.html">Tensor Broadcasting</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Template Broadcasting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xtensors.template_broadcaster"><code class="docutils literal notranslate"><span class="pre">template_broadcaster()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xtensors.AxisSelector"><code class="docutils literal notranslate"><span class="pre">AxisSelector</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xtensors.AxisSelector.__init__"><code class="docutils literal notranslate"><span class="pre">AxisSelector.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtensors.AxisSelector.select_axis"><code class="docutils literal notranslate"><span class="pre">AxisSelector.select_axis()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xtensors.DimNameSelector"><code class="docutils literal notranslate"><span class="pre">DimNameSelector</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xtensors.DimNameSelector.__init__"><code class="docutils literal notranslate"><span class="pre">DimNameSelector.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtensors.DimNameSelector.select_axis"><code class="docutils literal notranslate"><span class="pre">DimNameSelector.select_axis()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xtensors.IndexSelector"><code class="docutils literal notranslate"><span class="pre">IndexSelector</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xtensors.IndexSelector.__init__"><code class="docutils literal notranslate"><span class="pre">IndexSelector.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtensors.IndexSelector.select_axis"><code class="docutils literal notranslate"><span class="pre">IndexSelector.select_axis()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xtensors.Template"><code class="docutils literal notranslate"><span class="pre">Template</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xtensors.Template.__init__"><code class="docutils literal notranslate"><span class="pre">Template.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtensors.Template.check_well_defined"><code class="docutils literal notranslate"><span class="pre">Template.check_well_defined()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtensors.Template.cast_and_update"><code class="docutils literal notranslate"><span class="pre">Template.cast_and_update()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtensors.Template.clear"><code class="docutils literal notranslate"><span class="pre">Template.clear()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtensors.Template.dims"><code class="docutils literal notranslate"><span class="pre">Template.dims</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtensors.Template.coords"><code class="docutils literal notranslate"><span class="pre">Template.coords</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="typing.html">Typing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ufuncs.html">UFuncs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binops.html">Binary Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reduc.html">Reduction Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="argfunc.html">Argument Functions and Coordinate Functions</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">xtensors</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+      <li class="breadcrumb-item active">Template Broadcasting</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/broadcast_template.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="template-broadcasting">
+<h1>Template Broadcasting<a class="headerlink" href="#template-broadcasting" title="Permalink to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="xtensors.template_broadcaster">
+<span class="sig-prename descclassname"><span class="pre">xtensors.</span></span><span class="sig-name descname"><span class="pre">template_broadcaster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dims</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'x'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'y'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="typing.html#xtensors.Broadcaster" title="xtensors.Broadcaster"><span class="pre">Broadcaster</span></a></span></span><a class="headerlink" href="#xtensors.template_broadcaster" title="Permalink to this definition"></a></dt>
+<dd><p>Return a template broadcaster with the specified dimensions and channels</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xtensors.AxisSelector">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xtensors.</span></span><span class="sig-name descname"><span class="pre">AxisSelector</span></span><a class="headerlink" href="#xtensors.AxisSelector" title="Permalink to this definition"></a></dt>
+<dd><p>Abstract base class for objects that implement <code class="code docutils literal notranslate"><span class="pre">select_axis</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="xtensors.AxisSelector.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#xtensors.AxisSelector.__init__" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtensors.AxisSelector.select_axis">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">select_axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tensor.html#xtensors.XTensor" title="xtensors.XTensor"><span class="pre">XTensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#xtensors.AxisSelector.select_axis" title="Permalink to this definition"></a></dt>
+<dd><p>Select an axis from the tensor X</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – tensor</p></li>
+<li><p><strong>channel</strong> – (optional) a string specifying the channel. If
+<code class="code docutils literal notranslate"><span class="pre">self.channel</span></code> is set, 
+axis selection will only be performed
+when the <code class="code docutils literal notranslate"><span class="pre">channel</span></code> parameter
+matches <code class="code docutils literal notranslate"><span class="pre">self.channel</span></code>, or else <code class="code docutils literal notranslate"><span class="pre">None</span></code> is returned.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xtensors.DimNameSelector">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xtensors.</span></span><span class="sig-name descname"><span class="pre">DimNameSelector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dimname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtensors.DimNameSelector" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#xtensors.AxisSelector" title="xtensors.tensor.broadcast._template.AxisSelector"><code class="xref py py-class docutils literal notranslate"><span class="pre">AxisSelector</span></code></a></p>
+<p>Select an axis based on its name</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="xtensors.DimNameSelector.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dimname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#xtensors.DimNameSelector.__init__" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dimname</strong> – target axis name</p></li>
+<li><p><strong>required</strong> – if <code class="code docutils literal notranslate"><span class="pre">True</span></code>, a <code class="code docutils literal notranslate"><span class="pre">KeyError</span></code> will be raised if 
+no axis named <code class="code docutils literal notranslate"><span class="pre">dimname</span></code> is found when selecting an axis from a tensor.</p></li>
+<li><p><strong>channel</strong> – Selecting channel.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtensors.DimNameSelector.select_axis">
+<span class="sig-name descname"><span class="pre">select_axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tensor.html#xtensors.XTensor" title="xtensors.XTensor"><span class="pre">XTensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#xtensors.DimNameSelector.select_axis" title="Permalink to this definition"></a></dt>
+<dd><p>Select an axis from the tensor X</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – tensor</p></li>
+<li><p><strong>channel</strong> – (optional) a string specifying the channel. If
+<code class="code docutils literal notranslate"><span class="pre">self.channel</span></code> is set, 
+axis selection will only be performed
+when the <code class="code docutils literal notranslate"><span class="pre">channel</span></code> parameter
+matches <code class="code docutils literal notranslate"><span class="pre">self.channel</span></code>, or else <code class="code docutils literal notranslate"><span class="pre">None</span></code> is returned.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xtensors.IndexSelector">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xtensors.</span></span><span class="sig-name descname"><span class="pre">IndexSelector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtensors.IndexSelector" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#xtensors.AxisSelector" title="xtensors.tensor.broadcast._template.AxisSelector"><code class="xref py py-class docutils literal notranslate"><span class="pre">AxisSelector</span></code></a></p>
+<p>Select an axis based on the index</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="xtensors.IndexSelector.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#xtensors.IndexSelector.__init__" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>axis</strong> – The axis index, negative indices are supported</p></li>
+<li><p><strong>channel</strong> – Selecting channel.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtensors.IndexSelector.select_axis">
+<span class="sig-name descname"><span class="pre">select_axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tensor.html#xtensors.XTensor" title="xtensors.XTensor"><span class="pre">XTensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#xtensors.IndexSelector.select_axis" title="Permalink to this definition"></a></dt>
+<dd><p>Select an axis from the tensor X</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – tensor</p></li>
+<li><p><strong>channel</strong> – (optional) a string specifying the channel. If
+<code class="code docutils literal notranslate"><span class="pre">self.channel</span></code> is set, 
+axis selection will only be performed
+when the <code class="code docutils literal notranslate"><span class="pre">channel</span></code> parameter
+matches <code class="code docutils literal notranslate"><span class="pre">self.channel</span></code>, or else <code class="code docutils literal notranslate"><span class="pre">None</span></code> is returned.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xtensors.Template">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xtensors.</span></span><span class="sig-name descname"><span class="pre">Template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">selectors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#xtensors.AxisSelector" title="xtensors.tensor.broadcast._template.AxisSelector"><span class="pre">AxisSelector</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtensors.Template" title="Permalink to this definition"></a></dt>
+<dd><p>A tensor broadcasting template that can be reused to broadcast multiple
+tensors.</p>
+<p>A template is basically a list of <a class="reference internal" href="#xtensors.AxisSelector" title="xtensors.AxisSelector"><code class="xref py py-class docutils literal notranslate"><span class="pre">AxisSelector</span></code></a> instances, each
+specifying how an axis (integer) should be selected.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="xtensors.Template.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">selectors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#xtensors.AxisSelector" title="xtensors.tensor.broadcast._template.AxisSelector"><span class="pre">AxisSelector</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#xtensors.Template.__init__" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>selectors</strong> – A list of <a class="reference internal" href="#xtensors.AxisSelector" title="xtensors.AxisSelector"><code class="xref py py-class docutils literal notranslate"><span class="pre">AxisSelector</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtensors.Template.check_well_defined">
+<span class="sig-name descname"><span class="pre">check_well_defined</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xtensors.Template.check_well_defined" title="Permalink to this definition"></a></dt>
+<dd><p>Check if the <code class="code docutils literal notranslate"><span class="pre">AxisSelector</span></code> s are configured in a self-consistent
+manner.</p>
+<p>In particular, this method checks if there are <code class="code docutils literal notranslate"><span class="pre">DimNameSelector</span></code> s with 
+duplicate names or <code class="code docutils literal notranslate"><span class="pre">AxisSelector</span></code> s with duplicate indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">ValueError</span></code> if the check fails</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtensors.Template.cast_and_update">
+<span class="sig-name descname"><span class="pre">cast_and_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="tensor.html#xtensors.XTensor" title="xtensors.XTensor"><span class="pre">XTensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="tensor.html#xtensors.XTensor" title="xtensors.XTensor"><span class="pre">XTensor</span></a></span></span><a class="headerlink" href="#xtensors.Template.cast_and_update" title="Permalink to this definition"></a></dt>
+<dd><p>Cast the input tensor according to the template and update self’s
+internal state (i.e. dimension names and coordinates).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtensors.Template.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xtensors.Template.clear" title="Permalink to this definition"></a></dt>
+<dd><p>Reset the internal states.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="xtensors.Template.dims">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dims</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dims</span></em><a class="headerlink" href="#xtensors.Template.dims" title="Permalink to this definition"></a></dt>
+<dd><p>The dimension names gathered from casting tensors.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="xtensors.Template.coords">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">coords</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Coords</span></em><a class="headerlink" href="#xtensors.Template.coords" title="Permalink to this definition"></a></dt>
+<dd><p>The coordinates names gathered from casting tensors.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="broadcast.html" class="btn btn-neutral float-left" title="Tensor Broadcasting" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="typing.html" class="btn btn-neutral float-right" title="Typing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Michael Wang.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

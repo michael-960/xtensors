@@ -3,9 +3,12 @@ from functools import wraps
 from typing import Callable, Protocol
 from textwrap import dedent
 
+
 import numpy as np
 
 from .. import tensor as xtt
+
+from ..tensor import XTensor, TensorLike
 
 
 
@@ -17,17 +20,6 @@ class UFunc(Protocol):
     def __call__(self, x: xtt.TensorLike, /) -> xtt.XTensor: ...
 
 
-def _inject_docs(ufunc: UFunc) -> UFunc:
-    _docs = dedent("""
-        :type X: TensorLike
-        :param X: Input tensor
-
-        :return: XTensor
-    """)
-    ufunc.__doc__ = _docs
-    return ufunc
-
-
 def _ufunc_factory(_np_func: _ufunc) -> UFunc:
     @xtt.generalize_at_0
     def _f(X: xtt.XTensor, /) -> xtt.XTensor:
@@ -35,24 +27,61 @@ def _ufunc_factory(_np_func: _ufunc) -> UFunc:
     return _f
 
 
+def _inject_docs(ufunc: UFunc, func_name: str) -> UFunc:
+    _docs = dedent(f"""
+        :param x: Input tensor
+
+        :return: :math:`{func_name}(x)`
+
+    """)
+    ufunc.__doc__ = _docs
+    return ufunc
+
+
+def _inject_sig(ufunc: UFunc) -> UFunc:
+    def _dummy(x: TensorLike, /) -> XTensor:
+        ...
+    _dummy.__doc__ = ufunc.__doc__
+
+    return wraps(_dummy)(ufunc)
+
+
 def _sigmoid(__x1: np.ndarray):
     return .5 * (1. + np.tanh(__x1/2))
 
 
-sigmoid = _inject_docs(_ufunc_factory(_sigmoid))
+def postproc(*args):
+    def _postproc(f: UFunc):
+        return _inject_sig(_inject_docs(f, *args))
 
-exp = _ufunc_factory(np.exp)
+    return _postproc
 
-log2 = _ufunc_factory(np.log2)
-log = _ufunc_factory(np.log)
-log10 = _ufunc_factory(np.log10)
 
-cos = _ufunc_factory(np.cos)
-sin = _ufunc_factory(np.sin)
-tan = _ufunc_factory(np.tan)
+# sigmoid = _inject_signature(_inject_docs(_ufunc_factory(_sigmoid), r'\mathrm{sigmoid}'))
 
-cosh = _ufunc_factory(np.cosh)
-sinh = _ufunc_factory(np.sinh)
-tanh = _ufunc_factory(np.tanh)
+sigmoid = postproc(r'\mathrm{sigmoid}')(_ufunc_factory(_sigmoid))
+
+exp = postproc(r'\exp')(_ufunc_factory(np.exp))
+
+log2 = postproc(r'\log_2')(_ufunc_factory(np.log2))
+
+log = postproc(r'\ln')(_ufunc_factory(np.log))
+
+log10 = postproc(r'\log_{10}')(_ufunc_factory(np.log10))
+
+cos = postproc(r'\cos')(_ufunc_factory(np.cos))
+
+sin = postproc(r'\sin')(_ufunc_factory(np.sin))
+
+tan = postproc(r'\tan')(_ufunc_factory(np.tan))
+
+cosh = postproc(r'\cosh')(_ufunc_factory(np.cosh))
+
+sinh = postproc(r'\sinh')(_ufunc_factory(np.sinh))
+
+tanh = postproc(r'\tanh')(_ufunc_factory(np.tanh))
+
+
+
 
 

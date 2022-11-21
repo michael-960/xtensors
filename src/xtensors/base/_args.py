@@ -20,13 +20,14 @@ ARGS_DIM = 'ARGS_DIM'
 class _args_func(Protocol):
     def __call__(self, a: np.ndarray, axes: xtnp.AxesLike) -> npt.NDArray[np.int_]: ...
 
+
 class ArgsFunction(Protocol):
     def __call__(self, x: xtt.TensorLike, /, dims: xtt.DimsLike) -> xtt.XTensor: ...
+
 
 class CoordsFunction(Protocol):
     def __call__(self, x: xtt.TensorLike, /, dims: xtt.DimsLike, *, 
             use_index_if_no_coord: bool=False) -> xtt.XTensor: ...
-
 
 def _reduction_factory(_func: _args_func) -> ArgsFunction:
     @xtt.generalize_at_0
@@ -51,7 +52,6 @@ argsmin = _reduction_factory(xtnp.argsmin)
 argsmax = _reduction_factory(xtnp.argsmax)
 nanargsmin = _reduction_factory(xtnp.nanargsmin)
 nanargsmax = _reduction_factory(xtnp.nanargsmax)
-
 
 
 def _coord_reduc_factory(_func: ArgsFunction) -> CoordsFunction:

@@ -1,11 +1,40 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Annotated
+from typing import List, Protocol, Sequence, Tuple, TypeVar, Union, Any
+import numpy as np
+
+
+class Array(Protocol):
+    """Anything that implements the :code:`__array__` protocol"""
+    def __array__(self) -> np.ndarray: ...
+
+
+class HasDimName(Protocol):
+    """Anything that implements the :code:`__get_dimname__` protocol"""
+
+    def __get_dimname__(self) -> str: ...
+
+
+TensorLike = Union[Array, Sequence, float]
+
+DimLike = Union[str,int,Tuple[str,int],HasDimName]
+
+DimsLike = List[DimLike]
+
+AxesPermutation = List[Union[int, None]]
+'''
+A list of integers or None that represents a permutation of a set of axes. None
+means that a new axis of length 1 is to be created at the corresponding index.
+'''
+
+Dims = List[Union[str,None]]
+Coords = List[Union[np.ndarray,None]]
+
+
 if TYPE_CHECKING:
-    from typing import List, Protocol, Sequence, Tuple, TypeVar, Union, Any
     from typing_extensions import ParamSpec
 
-    import numpy as np
     import numpy.typing as npt
 
 
@@ -18,29 +47,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     O = ParamSpec('O')
 
-    class Array(Protocol):
-        def __array__(self) -> np.ndarray: ...
-
-
-    TensorLike = Union[Array, Sequence, float]
-
-    AxesPermutation = List[Union[int, None]]
-    '''
-    A list of integers or None that represents a permutation of a set of axes. None
-    means that a new axis of length 1 is to be created at the corresponding index.
-    '''
-
-    class HasDimName(Protocol):
-        def __get_dimname__(self) -> str: ...
-
-    DimLike = Union[str,int,Tuple[str,int],HasDimName]
-    DimsLike = List[DimLike]
-
-    Dims = List[Union[str,None]]
-    Coords = List[Union[npt.NDArray[Any],None]]
-
-
-
+    
+    
 
     class Function_1Arg(Protocol[T_con, O, T_co]):
         def __call__(self, X: T_con, /, *args: O.args, **kwargs: O.kwargs) -> T_co: ...
