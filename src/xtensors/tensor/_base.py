@@ -141,7 +141,7 @@ class XTensor:
             assert isinstance(dim[1], int)
             assert len(dim) == 2
         except AssertionError as e:
-            raise TypeError('Dimlike should be int, str, or (str, int)') from e
+            raise TypeError(f'Dimlike should be int, str, or (str, int), but received {dim} instead') from e
 
 
         try:
@@ -164,10 +164,14 @@ class XTensor:
 
         if isinstance(dims, (int, str, tuple)): return [self.get_axis(dims)]
 
-        assert isinstance(dims, list)
+        if not isinstance(dims, list):
+            raise ValueError(f'Invalid dimension: {dims}')
 
         axes = [self.get_axis(dim) for dim in dims]
-        assert len(axes) == len(set(axes))
+
+        if len(axes) != len(set(axes)):
+            raise ValueError(f'Duplicate axes {axes}')
+
         return axes
             
     def set_dims(self, dims: Sequence[str|None]|None) -> None:
@@ -178,10 +182,16 @@ class XTensor:
         if dims is None:
             self._dims = [None for _ in self.data.shape]
         else:
-            assert len(dims) == len(self.data.shape)
-            assert '' not in dims
+            if len(dims) != len(self.data.shape):
+                raise ValueError(f'Invalid dimension names {dims} for tensor with shape {self.data.shape}')
+
+            if '' in dims:
+                raise ValueError(f'Invalid dimension names {dims}')
+
             _dims_without_none = [dim for dim in dims if dim is not None]
-            assert len(_dims_without_none) == len(set(_dims_without_none))
+            if len(_dims_without_none) != len(set(_dims_without_none)):
+                raise ValueError(f'Duplicate dimension names in {dims}')
+
             self._dims = list(dims)
 
             for axis, dim in enumerate(dims):
@@ -218,10 +228,16 @@ class XTensor:
             self._coords = [None for _ in self.data.shape]
         else:
             coords_clean: List[NDArray[Any]|None] = []
-            assert len(coords) == len(self.data.shape)
+            if len(coords) != len(self.data.shape):
+                raise ValueError(f'Received {len(coords)} coordinates for tensor with shape {self.data.shape}')
+
             for axis, coord in enumerate(coords):
                 if coord is not None:
-                    assert len(coord) == self.data.shape[axis]
+                    if len(coord) != self.data.shape[axis]:
+                        raise ValueError(
+                                f'Received coordinates with {len(coord)} elements at axis {axis} '+
+                                f'for tensor with shape {self.data.shape}')
+
                     coords_clean.append(np.array(coords[axis]))
                 else:
                     coords_clean.append(None)
