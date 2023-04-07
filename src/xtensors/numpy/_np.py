@@ -87,22 +87,24 @@ def bincount(
     if N is None:
         N = np.max(x) + 1
 
+
     shape = x.shape[:-1]
 
     # (D, M)
     _x = flatten(x, [a for a in range(len(x.shape))][:-1], position='left')
 
     D = _x.shape[0]
+    # (D, 1)
     index = np.arange(D).reshape(D, 1)
 
     N = cast(int, N)
-
+    
+    # (D, M) -> (DM,)
     stats = (index*N + _x).reshape(-1)
 
     if ignore_negative:
-        stats = stats[np.where(stats >= 0)]
+        stats = stats[np.where(_x.reshape(-1) >= 0)]
+        return np.bincount(stats, minlength=N*D).reshape(*shape, N)
 
-    y = np.bincount(stats, minlength=N*D).reshape(*shape, N)
-
-    return y
+    return np.bincount(stats, minlength=N*D).reshape(*shape, N)
 
