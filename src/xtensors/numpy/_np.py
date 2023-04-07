@@ -69,11 +69,20 @@ def fold_indices(indices: NDArray[np.int_], fold_shape: Sequence[int]) -> NDArra
         
 
 
-def bincount(x: NDArray[np.int_], N: int|None=None) -> NDArray[np.int_]:
-    '''
+def bincount(
+    x: NDArray[np.int_], N: int|None=None, *,
+    ignore_negative: bool = False    
+) -> NDArray[np.int_]:
+    """
         x: (*, M)
         return: (*, N)
-    '''
+
+        count the number of occurrences along the last axis of x
+
+        N: number of bins
+
+        ignore_negative: whether to ignore negative numbers
+    """
 
     if N is None:
         N = np.max(x) + 1
@@ -86,14 +95,14 @@ def bincount(x: NDArray[np.int_], N: int|None=None) -> NDArray[np.int_]:
     D = _x.shape[0]
     index = np.arange(D).reshape(D, 1)
 
-
     N = cast(int, N)
 
-    y = np.bincount((index*N + _x).reshape(-1), minlength=N*D).reshape(*shape, N)
+    stats = (index*N + _x).reshape(-1)
+
+    if ignore_negative:
+        stats = stats[np.where(stats >= 0)]
+
+    y = np.bincount(stats, minlength=N*D).reshape(*shape, N)
 
     return y
 
-
-
-    
-    

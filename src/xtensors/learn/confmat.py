@@ -9,7 +9,7 @@ def confusion_matrix(truth: np.ndarray, pred: np.ndarray, /, *, n_classes: int) 
         Y: (*, M)
     '''
     z = truth* n_classes + pred
-    cmat = xtnp.bincount(z, N=n_classes**2)
+    cmat = xtnp.bincount(z, N=n_classes**2, ignore_negative=True)
     return cmat.reshape(*cmat.shape[:-1], n_classes, n_classes)
 
 
